@@ -1,0 +1,549 @@
+<style>
+  /* ---------- Contact: clean, narrow, with texture ---------- */
+  .home-contact{padding:100px 0 80px}
+
+  .contact-wrap{
+    max-width:720px;
+    margin:0 auto;
+  }
+
+  /* Availability badge */
+  .contact-status{
+    display:flex;
+    justify-content:center;
+    margin-bottom:20px;
+  }
+  .contact-status-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    padding:6px 14px 6px 12px;
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    background:color-mix(in srgb,var(--surface) 65%,transparent);
+    color:var(--muted);
+    font-size:.78rem;
+    font-weight:500;
+    letter-spacing:-.005em;
+  }
+  .contact-status-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent);
+    animation:contactRing 2.2s ease-out infinite;
+  }
+  @keyframes contactRing{
+    0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}
+    100%{box-shadow:0 0 0 9px color-mix(in srgb,var(--accent) 0%,transparent)}
+  }
+
+  /* Header */
+  .contact-head{
+    text-align:center;
+    margin-bottom:44px;
+  }
+  .contact-head .eyebrow{display:block;margin-bottom:14px}
+  .contact-head h2{
+    font-size:clamp(1.9rem,3.6vw,2.6rem);
+    line-height:1.1;
+    letter-spacing:-.045em;
+    font-weight:850;
+    color:var(--text);
+    margin:0 0 14px;
+    text-wrap:balance;
+  }
+  .contact-head p{
+    font-size:.98rem;
+    line-height:1.6;
+    color:var(--muted);
+    margin:0 auto;
+    max-width:460px;
+  }
+
+  /* Form */
+  .cf-form{display:grid;gap:16px}
+
+  .cf-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .cf-field{display:flex;flex-direction:column;gap:7px}
+
+  .cf-field label{
+    font-size:.78rem;
+    font-weight:750;
+    letter-spacing:.02em;
+    color:var(--muted);
+  }
+  .cf-field label .req{color:var(--accent);margin-left:2px}
+
+  .cf-field input,
+  .cf-field textarea,
+  .cf-field select{
+    width:100%;
+    padding:13px 16px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface);
+    color:var(--text);
+    font-size:.94rem;
+    font-family:inherit;
+    outline:none;
+    transition:border-color .25s ease,background-color .25s ease;
+  }
+  .cf-field textarea{
+    resize:vertical;
+    min-height:130px;
+    line-height:1.6;
+  }
+  .cf-field input:focus,
+  .cf-field textarea:focus,
+  .cf-field select:focus{
+    border-color:color-mix(in srgb,var(--accent) 55%,var(--line));
+    background:var(--surface-2);
+  }
+  .cf-field input::placeholder,
+  .cf-field textarea::placeholder{color:var(--dim)}
+
+  .cf-field select{
+    appearance:none;
+    -webkit-appearance:none;
+    padding-right:40px;
+    cursor:pointer;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1l4 4 4-4' stroke='%238b93a5' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat;
+    background-position:right 16px center;
+  }
+
+  .cf-error{
+    display:block;
+    font-size:.74rem;
+    color:#ff9d9d;
+    letter-spacing:-.005em;
+    margin-top:2px;
+  }
+  .cf-field.invalid input,
+  .cf-field.invalid textarea,
+  .cf-field.invalid select{
+    border-color:color-mix(in srgb,#ff6b6b 55%,var(--line));
+  }
+
+  .cf-banner{
+    display:none;
+    padding:12px 16px;
+    border-radius:10px;
+    background:color-mix(in srgb,#ff6b6b 10%,transparent);
+    border:1px solid color-mix(in srgb,#ff6b6b 30%,transparent);
+    color:#ff9d9d;
+    font-size:.82rem;
+    line-height:1.5;
+  }
+  .cf-banner.show{display:block}
+
+  /* Submit */
+  .cf-submit{
+    width:100%;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:14px 24px;
+    margin-top:4px;
+    border:0;
+    border-radius:12px;
+    background:var(--accent);
+    color:#071007;
+    font-size:.94rem;
+    font-weight:800;
+    letter-spacing:-.005em;
+    cursor:pointer;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease;
+  }
+  .cf-submit:hover{
+    transform:translateY(-1px);
+    box-shadow:0 10px 28px color-mix(in srgb,var(--accent) 32%,transparent);
+  }
+  .cf-submit:active{transform:scale(.99)}
+  .cf-submit:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+    transform:none;
+  }
+  .cf-submit .arrow{
+    display:inline-block;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .cf-submit:hover .arrow{transform:translate(2px,-2px)}
+
+  /* Success */
+  .cf-success{
+    display:none;
+    padding:48px 32px;
+    text-align:center;
+    flex-direction:column;
+    align-items:center;
+  }
+  .cf-success.show{display:flex}
+  .cf-success-icon{
+    width:52px;height:52px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    background:var(--accent);
+    color:#071007;
+    font-size:1.35rem;
+    font-weight:900;
+    margin-bottom:18px;
+    animation:cfPop .5s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes cfPop{
+    0%{transform:scale(.6);opacity:0}
+    60%{transform:scale(1.08)}
+    100%{transform:scale(1);opacity:1}
+  }
+  .cf-success h3{
+    margin:0 0 8px;
+    font-size:1.15rem;
+    font-weight:800;
+    letter-spacing:-.025em;
+    color:var(--text);
+  }
+  .cf-success p{
+    margin:0;
+    font-size:.9rem;
+    line-height:1.6;
+    color:var(--muted);
+    max-width:340px;
+  }
+
+  /* ---------- Info cards at the bottom ---------- */
+  .contact-cards{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    margin-top:56px;
+  }
+
+  .contact-card{
+    position:relative;
+    padding:22px 24px 24px;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:linear-gradient(180deg,
+      color-mix(in srgb,var(--surface) 100%,transparent),
+      color-mix(in srgb,var(--surface-2) 35%,var(--surface)));
+    overflow:hidden;
+    transition:border-color .35s ease,transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .contact-card::after{
+    content:"";
+    position:absolute;
+    top:0;right:0;
+    width:36px;height:36px;
+    background:
+      linear-gradient(225deg,
+        transparent 50%,
+        color-mix(in srgb,var(--text) 8%,transparent) 50%,
+        color-mix(in srgb,var(--text) 8%,transparent) calc(50% + 1px),
+        transparent calc(50% + 1px));
+    opacity:.7;
+    pointer-events:none;
+  }
+  .contact-card:hover{
+    border-color:color-mix(in srgb,var(--accent) 32%,var(--line));
+    transform:translateY(-3px);
+  }
+
+  .contact-card-icon{
+    width:40px;height:40px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:11px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    margin-bottom:18px;
+    transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .3s ease,color .3s ease;
+  }
+  .contact-card:hover .contact-card-icon{
+    transform:translateY(-2px) rotate(-4deg);
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));
+    color:var(--accent);
+  }
+  .contact-card-icon svg{display:block;width:18px;height:18px}
+
+  .contact-card-label{
+    display:block;
+    font-size:.86rem;
+    font-weight:700;
+    letter-spacing:-.015em;
+    color:var(--text);
+    margin-bottom:5px;
+  }
+  .contact-card-value{
+    display:block;
+    font-size:.86rem;
+    font-weight:500;
+    letter-spacing:-.005em;
+    color:var(--muted);
+    text-decoration:none;
+    line-height:1.5;
+    transition:color .25s ease;
+    word-break:break-word;
+  }
+  a.contact-card-value:hover{color:var(--accent)}
+
+  /* Responsive */
+  @media (max-width:720px){
+    .home-contact{padding:72px 0 60px}
+    .contact-head{margin-bottom:32px}
+    .contact-head p{font-size:.92rem}
+    .cf-row{grid-template-columns:1fr}
+    .cf-success{padding:36px 20px}
+
+    .contact-cards{
+      grid-template-columns:1fr;
+      gap:12px;
+      margin-top:40px;
+    }
+    .contact-card{padding:20px 22px 22px;border-radius:14px}
+    .contact-card-icon{width:36px;height:36px;margin-bottom:14px}
+    .contact-card-icon svg{width:16px;height:16px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .cf-success-icon{animation:none}
+    .contact-status-dot{animation:none}
+    .cf-submit,.cf-submit .arrow,.contact-card,.contact-card-icon{transition:none}
+  }
+</style>
+
+<section class="section home-contact" id="contact">
+  <div class="wrap">
+    <div class="contact-wrap">
+
+      <!-- Availability badge -->
+      <div class="contact-status reveal">
+        <span class="contact-status-pill">
+          <span class="contact-status-dot" aria-hidden="true"></span>
+          {{ site.availability|default:"Available for freelance & contract work" }}
+        </span>
+      </div>
+
+      <!-- Header -->
+      <header class="contact-head reveal">
+        <span class="eyebrow">Contact</span>
+        <h2>Have something worth building?</h2>
+        <p>Send a few details about the project. I'll reply within a day.</p>
+      </header>
+
+      <!-- Form -->
+      <form class="cf-form reveal" id="cfForm" method="post" action="{% url 'contact' %}" novalidate>
+        {% csrf_token %}
+
+        <div class="cf-row">
+          <div class="cf-field" data-field="name">
+            <label for="cfName">Name <span class="req">*</span></label>
+            <input type="text" id="cfName" name="name" placeholder="Your name" autocomplete="name" required>
+          </div>
+          <div class="cf-field" data-field="email">
+            <label for="cfEmail">Email <span class="req">*</span></label>
+            <input type="email" id="cfEmail" name="email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+
+        <div class="cf-field" data-field="subject">
+          <label for="cfSubject">Subject <span class="req">*</span></label>
+          <input type="text" id="cfSubject" name="subject" placeholder="What can I help you build?" required>
+        </div>
+
+        <div class="cf-field" data-field="message">
+          <label for="cfMessage">Message <span class="req">*</span></label>
+          <textarea id="cfMessage" name="message" placeholder="Tell me about the project — scope, timeline, and what a great outcome looks like." required></textarea>
+        </div>
+
+        <div class="cf-row">
+          <div class="cf-field" data-field="project_type">
+            <label for="cfType">Project type</label>
+            <select id="cfType" name="project_type">
+              <option value="">Choose…</option>
+              <option value="Website">Website</option>
+              <option value="Web app / SaaS">Web app / SaaS</option>
+              <option value="E-commerce">E-commerce</option>
+              <option value="API / backend">API / backend</option>
+              <option value="Optimization / audit">Optimization / audit</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="cf-field" data-field="budget">
+            <label for="cfBudget">Budget</label>
+            <select id="cfBudget" name="budget">
+              <option value="">Choose…</option>
+              <option value="Under $1,000">Under $1,000</option>
+              <option value="$1,000–$3,000">$1,000–$3,000</option>
+              <option value="$3,000–$8,000">$3,000–$8,000</option>
+              <option value="$8,000+">$8,000+</option>
+              <option value="Let's discuss">Let's discuss</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cf-banner" id="cfBanner" role="alert"></div>
+
+        <button class="cf-submit" type="submit" id="cfSubmit">
+          Send message <span class="arrow">→</span>
+        </button>
+      </form>
+
+      <div class="cf-success" id="cfSuccess">
+        <div class="cf-success-icon">✓</div>
+        <h3>Message received.</h3>
+        <p>Thanks for reaching out. I'll reply within 24 hours.</p>
+      </div>
+
+      <!-- Info cards -->
+      <div class="contact-cards reveal">
+
+        <div class="contact-card">
+          <span class="contact-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="14" rx="2"/>
+              <path d="m3 7 9 6 9-6"/>
+            </svg>
+          </span>
+          <span class="contact-card-label">Email me</span>
+          <a class="contact-card-value" href="mailto:{{ site.email }}">{{ site.email }}</a>
+        </div>
+
+        <div class="contact-card">
+          <span class="contact-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </span>
+          <span class="contact-card-label">My location</span>
+          <span class="contact-card-value">{{ site.location|default:"Pakistan" }}</span>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  const form = document.getElementById('cfForm');
+  const submitBtn = document.getElementById('cfSubmit');
+  const banner = document.getElementById('cfBanner');
+  const successBox = document.getElementById('cfSuccess');
+  if(!form || !submitBtn) return;
+
+  function clearFieldErrors(){
+    form.querySelectorAll('.cf-field.invalid').forEach(f => {
+      f.classList.remove('invalid');
+      const old = f.querySelector('.cf-error');
+      if(old) old.remove();
+    });
+  }
+
+  function showBanner(msg){
+    if(!banner) return;
+    banner.textContent = msg;
+    banner.classList.add('show');
+  }
+  function hideBanner(){
+    if(!banner) return;
+    banner.classList.remove('show');
+    banner.textContent = '';
+  }
+
+  function fieldError(name, msg){
+    const field = form.querySelector('[data-field="' + name + '"]');
+    if(!field) return;
+    field.classList.add('invalid');
+    const el = document.createElement('span');
+    el.className = 'cf-error';
+    el.textContent = msg;
+    field.appendChild(el);
+  }
+
+  function validate(){
+    clearFieldErrors();
+    hideBanner();
+
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const subject = form.subject.value.trim();
+    const message = form.message.value.trim();
+    let ok = true;
+
+    if(!name){ fieldError('name', 'Please enter your name.'); ok = false; }
+    if(!email){
+      fieldError('email', 'Please enter your email.');
+      ok = false;
+    } else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      fieldError('email', 'Please enter a valid email address.');
+      ok = false;
+    }
+    if(!subject){ fieldError('subject', 'Please add a subject.'); ok = false; }
+    if(!message){
+      fieldError('message', 'Please write a message.');
+      ok = false;
+    } else if(message.length < 12){
+      fieldError('message', 'Please provide a little more detail.');
+      ok = false;
+    }
+    return ok;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!validate()) return;
+
+    submitBtn.disabled = true;
+    const original = submitBtn.innerHTML;
+    submitBtn.innerHTML = 'Sending…';
+
+    try {
+      const csrf = form.querySelector('[name="csrfmiddlewaretoken"]').value;
+      const data = new FormData(form);
+
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrf,
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+        },
+        body: data,
+        credentials: 'same-origin',
+      });
+
+      const payload = await res.json().catch(() => ({}));
+
+      if(res.ok && payload.ok){
+        form.style.display = 'none';
+        successBox.classList.add('show');
+      } else {
+        let generic = 'Something went wrong. Please try again, or email me directly.';
+        if(payload.errors){
+          Object.keys(payload.errors).forEach(k => {
+            const msg = Array.isArray(payload.errors[k]) ? payload.errors[k][0] : payload.errors[k];
+            fieldError(k, msg);
+          });
+          generic = 'Please fix the highlighted fields and try again.';
+        }
+        showBanner(generic);
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = original;
+      }
+    } catch(err){
+      showBanner('Network error. Please check your connection and try again.');
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = original;
+    }
+  });
+})();
+</script>

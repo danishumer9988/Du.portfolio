@@ -1,0 +1,375 @@
+<style>
+  /* ---------- Home: Projects carousel ---------- */
+  .home-projects{padding:110px 0 100px}
+
+  .hp-head{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:60px;
+    align-items:end;
+    margin-bottom:48px;
+    padding-bottom:36px;
+    border-bottom:1px solid var(--line);
+  }
+  .hp-head .eyebrow{display:block;margin-bottom:14px}
+  .hp-head h2{
+    font-size:clamp(2.2rem,4.2vw,3.4rem);
+    line-height:1.02;
+    letter-spacing:-.05em;
+    font-weight:850;
+    color:var(--text);
+    margin:0;
+    text-wrap:balance;
+  }
+  .hp-head-side{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    align-items:flex-start;
+  }
+  .hp-head-side p{
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0;
+    max-width:460px;
+  }
+
+  .hp-controls{display:flex;gap:8px}
+  .hp-controls button{
+    width:42px;height:42px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);
+    border-radius:50%;
+    background:var(--surface);
+    color:var(--text);
+    font-size:1rem;
+    transition:transform .3s ease,border-color .3s ease,color .3s ease;
+  }
+  .hp-controls button:hover{
+    transform:translateY(-2px);
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    color:var(--accent);
+  }
+  .hp-controls button:disabled{
+    opacity:.35;
+    cursor:not-allowed;
+    transform:none;
+    color:var(--muted);
+  }
+
+  /* ---------- Track: 3 cards visible ---------- */
+  .hp-track{
+    display:flex;
+    gap:24px;
+    overflow-x:auto;
+    scroll-snap-type:x proximity;
+    scroll-behavior:smooth;
+    padding-bottom:16px;
+    scrollbar-width:none;
+    -ms-overflow-style:none;
+  }
+  .hp-track::-webkit-scrollbar{display:none}
+
+  /* ---------- Card ---------- */
+  .hp-card{
+    flex:0 0 calc((100% - 48px) / 3);   /* 3 cards + 2 gaps of 24px */
+    min-width:0;
+    scroll-snap-align:start;
+    display:flex;
+    flex-direction:column;
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+    background:var(--surface);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1),
+               border-color .3s ease,
+               box-shadow .4s ease;
+  }
+  .hp-card:hover{
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));
+    transform:translateY(-4px);
+    box-shadow:0 16px 40px rgba(0,0,0,.28);
+  }
+
+  /* Image */
+  .hp-image{
+    position:relative;
+    aspect-ratio:16/10;
+    overflow:hidden;
+    display:block;
+    background:linear-gradient(135deg,var(--surface-2),var(--surface));
+    border-bottom:1px solid var(--line);
+  }
+  .hp-image img{
+    width:100%;height:100%;
+    object-fit:cover;display:block;
+    transition:transform .6s cubic-bezier(.2,.8,.2,1);
+  }
+  .hp-card:hover .hp-image img{transform:scale(1.05)}
+
+  .hp-image-fallback{
+    position:absolute;inset:0;
+    display:grid;place-items:center;
+    background:
+      radial-gradient(circle at 30% 30%,
+        color-mix(in srgb,var(--accent) 12%,transparent),
+        transparent 55%),
+      linear-gradient(135deg,var(--surface-2),var(--surface));
+  }
+  .hp-image-fallback span{
+    font-size:2.4rem;
+    font-weight:950;
+    letter-spacing:-.05em;
+    color:transparent;
+    -webkit-text-stroke:1.5px color-mix(in srgb,var(--text) 22%,transparent);
+  }
+
+  /* Body */
+  .hp-body{
+    padding:20px 22px 22px;
+    display:flex;
+    flex-direction:column;
+    flex:1;
+  }
+
+  .hp-cat{
+    font-size:.68rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--accent);
+    margin-bottom:10px;
+  }
+
+  .hp-title{
+    font-size:1.08rem;
+    font-weight:800;
+    letter-spacing:-.025em;
+    line-height:1.25;
+    color:var(--text);
+    margin:0 0 8px;
+    transition:color .3s ease;
+  }
+  .hp-card:hover .hp-title{color:var(--accent)}
+
+  .hp-desc{
+    font-size:.88rem;
+    line-height:1.6;
+    color:var(--muted);
+    margin:0 0 18px;
+    flex:1;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+
+  .hp-tags{
+    display:flex;flex-wrap:wrap;gap:5px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+  }
+  .hp-tag{
+    display:inline-flex;
+    padding:4px 9px;
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    background:color-mix(in srgb,var(--bg) 40%,transparent);
+    color:var(--muted);
+    font-size:.68rem;
+    font-weight:600;
+    white-space:nowrap;
+  }
+
+  /* Footer CTA */
+  .hp-foot{
+    display:flex;
+    justify-content:center;
+    margin-top:48px;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:980px){
+    .home-projects{padding:90px 0 80px}
+    .hp-head{
+      grid-template-columns:1fr;
+      gap:24px;
+      margin-bottom:36px;
+      padding-bottom:28px;
+    }
+    .hp-card{flex-basis:calc((100% - 24px) / 2)}   /* 2 cards on tablet */
+  }
+
+  @media (max-width:720px){
+    .home-projects{padding:72px 0 60px}
+    .hp-head{margin-bottom:28px;padding-bottom:22px}
+    .hp-controls{display:none}
+    .hp-track{gap:16px}
+    .hp-card{flex-basis:82vw}                        /* 1 card on mobile */
+    .hp-body{padding:18px 20px 20px}
+    .hp-foot{margin-top:32px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .hp-track{scroll-behavior:auto}
+  }
+</style>
+
+<section class="section home-projects" id="projects">
+  <div class="wrap">
+
+    <header class="hp-head reveal">
+      <div>
+        <span class="eyebrow">Selected work</span>
+        <h2 class="kicker" style="margin:0">Built with intent.</h2>
+      </div>
+      <div class="hp-head-side">
+        <p>A selection of recent projects — from Django backends and API platforms to React and Next.js interfaces.</p>
+        <div class="hp-controls">
+          <button id="hpPrev" aria-label="Previous" type="button">←</button>
+          <button id="hpNext" aria-label="Next" type="button">→</button>
+        </div>
+      </div>
+    </header>
+
+    {% if featured_projects %}
+      <div class="hp-track reveal" id="hpTrack">
+        {% for project in featured_projects %}
+          <article class="hp-card">
+            <a class="hp-image" href="{% url 'project_detail' project.slug %}" aria-label="View {{ project.title }}">
+              {% if project.featured_image %}
+                <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy" draggable="false">
+              {% elif project.gallery.first %}
+                <img src="{{ project.gallery.first.image.url }}" alt="{{ project.gallery.first.alt_text|default:project.title }}" loading="lazy" draggable="false">
+              {% else %}
+                <div class="hp-image-fallback">
+                  <span>{{ project.title|slice:":2"|upper }}</span>
+                </div>
+              {% endif %}
+            </a>
+
+            <div class="hp-body">
+              <span class="hp-cat">{{ project.category }}{% if project.industry %} · {{ project.industry.name }}{% endif %}</span>
+              <h3 class="hp-title">
+                <a href="{% url 'project_detail' project.slug %}">{{ project.title }}</a>
+              </h3>
+              <p class="hp-desc">{{ project.short_description }}</p>
+
+              {% if project.technologies.all %}
+                <div class="hp-tags">
+                  {% for tech in project.technologies.all|slice:":3" %}
+                    <span class="hp-tag">{{ tech.name }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <div class="hp-foot reveal">
+        <a class="btn" href="{% url 'projects' %}">View all projects <span class="arrow">→</span></a>
+      </div>
+    {% else %}
+      <div class="surface"><p class="muted" style="margin:0">Add projects through Admin.</p></div>
+    {% endif %}
+
+  </div>
+</section>
+
+<script>
+(function(){
+  const track = document.getElementById('hpTrack');
+  const prev = document.getElementById('hpPrev');
+  const next = document.getElementById('hpNext');
+  if(!track || !prev || !next) return;
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* -------- Step = one card width + gap -------- */
+  function cardStep(){
+    const card = track.querySelector('.hp-card');
+    if(!card) return 340;
+    const gap = parseFloat(getComputedStyle(track).gap) || 24;
+    return card.getBoundingClientRect().width + gap;
+  }
+
+  /* -------- Button state -------- */
+  function updateButtons(){
+    const max = track.scrollWidth - track.clientWidth - 4;
+    prev.disabled = track.scrollLeft <= 4;
+    next.disabled = track.scrollLeft >= max;
+  }
+
+  /* -------- Manual navigation -------- */
+  function goNext(){
+    const max = track.scrollWidth - track.clientWidth;
+    if(track.scrollLeft >= max - 4){
+      track.scrollTo({ left: 0, behavior: 'smooth' });   // loop back
+    } else {
+      track.scrollBy({ left: cardStep(), behavior: 'smooth' });
+    }
+  }
+
+  function goPrev(){
+    if(track.scrollLeft <= 4){
+      track.scrollTo({ left: track.scrollWidth, behavior: 'smooth' });
+    } else {
+      track.scrollBy({ left: -cardStep(), behavior: 'smooth' });
+    }
+  }
+
+  prev.addEventListener('click', () => {
+    goPrev();
+    pauseFor(3000);
+  });
+  next.addEventListener('click', () => {
+    goNext();
+    pauseFor(3000);
+  });
+
+  track.addEventListener('scroll', () => requestAnimationFrame(updateButtons), { passive: true });
+  window.addEventListener('resize', updateButtons);
+  requestAnimationFrame(updateButtons);
+
+  /* -------- Auto-scroll: advance one card every 3.5s -------- */
+  if(reduce) return;
+
+  const INTERVAL = 3500;   // change this to speed up / slow down
+  let paused = false;
+  let pausedUntil = 0;
+
+  function tick(){
+    const now = performance.now();
+    if(paused) return;
+    if(now < pausedUntil) return;
+    goNext();
+  }
+
+  let timer = setInterval(tick, INTERVAL);
+
+  function pauseFor(ms){
+    pausedUntil = performance.now() + ms;
+  }
+
+  /* -------- Pause on hover / focus -------- */
+  function onEnter(){ paused = true; }
+  function onLeave(){ paused = false; }
+
+  track.addEventListener('mouseenter', onEnter);
+  track.addEventListener('mouseleave', onLeave);
+  track.addEventListener('focusin', onEnter);
+  track.addEventListener('focusout', onLeave);
+
+  /* -------- Pause when tab is hidden -------- */
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden){
+      clearInterval(timer);
+      timer = null;
+    } else if(!timer){
+      timer = setInterval(tick, INTERVAL);
+    }
+  });
+})();
+</script>

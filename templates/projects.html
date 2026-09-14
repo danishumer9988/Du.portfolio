@@ -1,0 +1,544 @@
+{% extends "base.html" %}
+
+{% block title %}Projects — {{ site.site_name }}{% endblock %}
+{% block meta_description %}Selected work — full-stack builds across Django, React, Next.js, and APIs.{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ---------- Projects page: alternating case studies ---------- */
+  .projects-page{padding:80px 0 60px}
+
+  /* Header */
+  .projects-hero{
+    max-width:880px;
+    margin:0 auto 56px;
+    text-align:center;
+  }
+  .projects-hero .eyebrow{display:block;margin-bottom:18px}
+  .projects-hero h1{
+    font-size:clamp(2.6rem,6vw,5rem);
+    line-height:.98;
+    letter-spacing:-.06em;
+    font-weight:850;
+    color:var(--text);
+    margin:0 0 22px;
+    text-wrap:balance;
+  }
+  .projects-hero p{
+    font-size:clamp(1rem,1.2vw,1.12rem);
+    line-height:1.65;
+    color:var(--muted);
+    margin:0 auto;
+    max-width:560px;
+  }
+
+  /* Filter chips — minimal, centered */
+  .filter-chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:center;
+    margin:0 0 72px;
+  }
+  .filter-chips a,
+  .filter-chips span.chip-static{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:8px 16px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--surface);
+    color:var(--muted);
+    font-size:.82rem;
+    font-weight:600;
+    letter-spacing:-.005em;
+    transition:border-color .25s ease,color .25s ease,background-color .25s ease,transform .25s ease;
+  }
+  .filter-chips a:hover{
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));
+    color:var(--text);
+    transform:translateY(-1px);
+  }
+  .filter-chips a.active{
+    background:var(--accent);
+    border-color:transparent;
+    color:#071007;
+    font-weight:800;
+  }
+  .filter-chips a.active:hover{
+    transform:translateY(-1px);
+  }
+
+  /* Alternating case-study blocks */
+  .case-list{
+    display:grid;
+    gap:120px;
+  }
+
+  .case-block{
+    display:grid;
+    grid-template-columns:1.15fr 1fr;
+    gap:64px;
+    align-items:center;
+  }
+  .case-block.reverse{
+    grid-template-columns:1fr 1.15fr;
+    direction:rtl;
+  }
+  .case-block.reverse > *{
+    direction:ltr;
+  }
+
+  /* Image */
+  .case-image{
+    position:relative;
+    aspect-ratio:4/3;
+    border-radius:22px;
+    overflow:hidden;
+    border:1px solid var(--line);
+    background:linear-gradient(135deg,var(--surface-2),var(--surface));
+    display:block;
+    transition:border-color .35s ease,transform .5s cubic-bezier(.2,.8,.2,1),box-shadow .5s ease;
+  }
+  .case-block:hover .case-image{
+    border-color:color-mix(in srgb,var(--accent) 32%,var(--line));
+    transform:translateY(-4px);
+    box-shadow:0 24px 60px rgba(0,0,0,.35);
+  }
+  .case-image img{
+    width:100%;height:100%;
+    object-fit:cover;display:block;
+    transition:transform .9s cubic-bezier(.2,.8,.2,1);
+  }
+  .case-block:hover .case-image img{transform:scale(1.04)}
+
+  .case-image-fallback{
+    position:absolute;inset:0;
+    display:grid;place-items:center;
+    background:
+      radial-gradient(circle at 30% 30%,
+        color-mix(in srgb,var(--accent) 14%,transparent),
+        transparent 55%),
+      radial-gradient(circle at 70% 70%,
+        color-mix(in srgb,var(--accent-2) 10%,transparent),
+        transparent 55%),
+      linear-gradient(135deg,var(--surface-2),var(--surface));
+  }
+  .case-image-fallback span{
+    font-size:clamp(3.4rem,6vw,5rem);
+    font-weight:950;
+    letter-spacing:-.06em;
+    color:transparent;
+    -webkit-text-stroke:2px color-mix(in srgb,var(--text) 22%,transparent);
+    text-stroke:2px color-mix(in srgb,var(--text) 22%,transparent);
+    user-select:none;
+  }
+
+  /* Featured badge */
+  .case-featured{
+    position:absolute;
+    top:20px;left:20px;
+    display:inline-flex;align-items:center;gap:7px;
+    padding:6px 13px;
+    border-radius:999px;
+    background:rgba(8,10,14,.72);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.12);
+    color:#f4f6fb;
+    font-size:.68rem;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    z-index:2;
+  }
+  .case-featured::before{
+    content:"";
+    width:5px;height:5px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 8px var(--accent);
+  }
+  html[data-theme="light"] .case-featured{
+    background:rgba(255,255,255,.82);
+    border-color:rgba(0,0,0,.08);
+    color:#0d0f14;
+  }
+
+  /* Text side */
+  .case-content{max-width:520px}
+  .case-block.reverse .case-content{
+    margin-left:auto;
+  }
+
+  .case-index{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:.72rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--accent);
+    margin-bottom:20px;
+  }
+  .case-index::before{
+    content:"";
+    width:28px;height:1px;
+    background:var(--accent);
+  }
+
+  .case-title{
+    font-size:clamp(1.8rem,3.6vw,2.8rem);
+    font-weight:850;
+    letter-spacing:-.045em;
+    line-height:1.05;
+    color:var(--text);
+    margin:0 0 18px;
+    text-wrap:balance;
+  }
+  .case-title a{
+    transition:color .3s ease;
+  }
+  .case-block:hover .case-title a{color:var(--accent)}
+
+  .case-desc{
+    font-size:1rem;
+    line-height:1.7;
+    color:var(--muted);
+    margin:0 0 26px;
+  }
+
+  /* Meta strip */
+  .case-meta{
+    display:flex;flex-wrap:wrap;gap:24px;
+    padding:20px 0;
+    margin-bottom:26px;
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+  }
+  .case-meta-item{
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .case-meta-item dt{
+    font-size:.68rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+  }
+  .case-meta-item dd{
+    margin:0;
+    font-size:.9rem;
+    color:var(--text);
+    font-weight:600;
+    letter-spacing:-.005em;
+  }
+
+  /* Tech tags */
+  .case-tags{
+    display:flex;flex-wrap:wrap;gap:6px;
+    margin-bottom:30px;
+  }
+  .case-tag{
+    display:inline-flex;
+    padding:5px 11px;
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    background:color-mix(in srgb,var(--bg) 40%,transparent);
+    color:var(--muted);
+    font-size:.72rem;
+    font-weight:600;
+    white-space:nowrap;
+    transition:border-color .25s ease,color .25s ease;
+  }
+  .case-block:hover .case-tag{
+    color:var(--text);
+    border-color:color-mix(in srgb,var(--text) 20%,var(--line-strong));
+  }
+
+  /* CTA link */
+  .case-link{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:12px 20px;
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    background:var(--surface);
+    color:var(--text);
+    font-size:.88rem;
+    font-weight:700;
+    transition:border-color .3s ease,color .3s ease,background-color .3s ease;
+  }
+  .case-link:hover{
+    border-color:var(--accent);
+    color:var(--accent);
+    background:color-mix(in srgb,var(--accent) 6%,var(--surface));
+  }
+  .case-link .arrow{
+    display:inline-block;
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  }
+  .case-link:hover .arrow{transform:translate(3px,-3px)}
+
+  /* Empty state */
+  .empty-state{
+    padding:100px 40px;
+    text-align:center;
+    border:1px dashed var(--line-strong);
+    border-radius:22px;
+  }
+  .empty-state h3{
+    font-size:1.3rem;
+    font-weight:750;
+    margin:0 0 10px;
+    color:var(--text);
+  }
+  .empty-state p{
+    color:var(--muted);
+    margin:0;
+    font-size:.95rem;
+  }
+
+  /* Pagination */
+  .pagination{
+    display:flex;justify-content:center;align-items:center;
+    gap:8px;margin-top:100px;
+  }
+  .pagination a,
+  .pagination span{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:42px;height:42px;
+    padding:0 14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    color:var(--text);
+    font-size:.9rem;
+    font-weight:600;
+    background:var(--surface);
+    transition:border-color .25s ease,color .25s ease,background-color .25s ease,transform .25s ease;
+  }
+  .pagination a:hover{
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    color:var(--accent);
+    transform:translateY(-2px);
+  }
+  .pagination .current{
+    background:var(--accent);
+    color:#071007;
+    border-color:transparent;
+    font-weight:800;
+  }
+
+  /* Search bar — subtle, above chips */
+  .search-wrap{
+    max-width:420px;
+    margin:0 auto 24px;
+  }
+  .search-wrap input{
+    width:100%;
+    padding:13px 20px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:var(--surface);
+    color:var(--text);
+    font-size:.9rem;
+    text-align:center;
+    outline:none;
+    transition:border-color .25s ease;
+  }
+  .search-wrap input:focus{
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+  }
+  .search-wrap input::placeholder{color:var(--dim)}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:980px){
+    .projects-page{padding:60px 0 50px}
+    .projects-hero{margin-bottom:44px}
+
+    .case-list{gap:80px}
+    .case-block,
+    .case-block.reverse{
+      grid-template-columns:1fr;
+      gap:32px;
+      direction:ltr;
+    }
+    .case-content{max-width:100%;margin-left:0 !important}
+    .case-image{aspect-ratio:16/10}
+    .case-title{font-size:clamp(1.6rem,4vw,2.2rem)}
+  }
+
+  @media (max-width:720px){
+    .projects-page{padding:48px 0 40px}
+    .projects-hero{margin-bottom:36px}
+    .filter-chips{margin-bottom:48px;gap:6px}
+    .filter-chips a,
+    .filter-chips span.chip-static{
+      padding:7px 13px;
+      font-size:.76rem;
+    }
+
+    .case-list{gap:60px}
+    .case-block{gap:24px}
+    .case-image{border-radius:16px}
+    .case-title{font-size:1.5rem;margin-bottom:14px}
+    .case-desc{font-size:.92rem;margin-bottom:22px}
+    .case-meta{gap:18px;padding:16px 0;margin-bottom:22px}
+    .case-meta-item dd{font-size:.85rem}
+    .case-tag{font-size:.68rem;padding:4px 9px}
+    .case-link{padding:10px 16px;font-size:.82rem}
+
+    .pagination{margin-top:60px}
+    .pagination a,.pagination span{
+      min-width:38px;height:38px;padding:0 11px;font-size:.85rem;
+    }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .case-image,
+    .case-image img,
+    .case-link .arrow,
+    .filter-chips a{transition:none}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="section projects-page">
+  <div class="wrap">
+
+    <header class="projects-hero reveal">
+      <span class="eyebrow">Selected work</span>
+      <h1>Projects I've built.</h1>
+      <p>A closer look at recent case studies — Django backends, API platforms, React and Next.js interfaces, and the delivery work behind them.</p>
+    </header>
+
+    <form class="search-wrap reveal" method="get" role="search">
+      <input type="search" name="q" value="{{ active_filters.q }}" placeholder="Search projects…" aria-label="Search projects">
+      {% if active_filters.category %}<input type="hidden" name="category" value="{{ active_filters.category }}">{% endif %}
+      {% if active_filters.industry %}<input type="hidden" name="industry" value="{{ active_filters.industry }}">{% endif %}
+      {% if active_filters.technology %}<input type="hidden" name="technology" value="{{ active_filters.technology }}">{% endif %}
+      {% if active_filters.sort %}<input type="hidden" name="sort" value="{{ active_filters.sort }}">{% endif %}
+    </form>
+
+    <nav class="filter-chips reveal" aria-label="Filter by category">
+      <a href="{% url 'projects' %}" class="{% if not active_filters.category %}active{% endif %}">All</a>
+      {% for item in categories %}
+        <a href="?category={{ item }}{% if active_filters.q %}&q={{ active_filters.q }}{% endif %}"
+           class="{% if active_filters.category == item %}active{% endif %}">{{ item }}</a>
+      {% endfor %}
+    </nav>
+
+    {% if page_obj %}
+      <div class="case-list">
+        {% for project in page_obj %}
+          <article class="case-block reveal {% if forloop.counter|divisibleby:2 %}reverse{% endif %}">
+
+            <a class="case-image" href="{% url 'project_detail' project.slug %}" aria-label="View {{ project.title }}">
+              {% if project.featured_image %}
+                <img src="{{ project.featured_image.url }}" alt="{{ project.title }}" loading="lazy">
+              {% elif project.gallery.first %}
+                <img src="{{ project.gallery.first.image.url }}" alt="{{ project.gallery.first.alt_text|default:project.title }}" loading="lazy">
+              {% else %}
+                <div class="case-image-fallback">
+                  <span>{{ project.title|slice:":2"|upper }}</span>
+                </div>
+              {% endif %}
+
+              {% if project.featured %}
+                <span class="case-featured">Featured</span>
+              {% endif %}
+            </a>
+
+            <div class="case-content">
+              <span class="case-index">
+                Case {% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter|add:page_obj.start_index|add:"-1" }}
+              </span>
+
+              <h2 class="case-title">
+                <a href="{% url 'project_detail' project.slug %}">{{ project.title }}</a>
+              </h2>
+
+              <p class="case-desc">{{ project.short_description }}</p>
+
+              <dl class="case-meta">
+                <div class="case-meta-item">
+                  <dt>Category</dt>
+                  <dd>{{ project.category }}</dd>
+                </div>
+                {% if project.industry %}
+                  <div class="case-meta-item">
+                    <dt>Industry</dt>
+                    <dd>{{ project.industry.name }}</dd>
+                  </div>
+                {% endif %}
+                {% if project.project_date %}
+                  <div class="case-meta-item">
+                    <dt>Year</dt>
+                    <dd>{{ project.project_date|date:"Y" }}</dd>
+                  </div>
+                {% endif %}
+                {% if project.client %}
+                  <div class="case-meta-item">
+                    <dt>Client</dt>
+                    <dd>{{ project.client }}</dd>
+                  </div>
+                {% endif %}
+              </dl>
+
+              {% if project.technologies.all %}
+                <div class="case-tags">
+                  {% for tech in project.technologies.all|slice:":5" %}
+                    <span class="case-tag">{{ tech.name }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              <a class="case-link" href="{% url 'project_detail' project.slug %}">
+                View case study <span class="arrow">↗</span>
+              </a>
+            </div>
+
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>No projects match those filters.</h3>
+        <p>Try clearing the search or <a href="{% url 'projects' %}" style="color:var(--accent)">reset the filters</a>.</p>
+      </div>
+    {% endif %}
+
+    {% if page_obj.has_other_pages %}
+      <nav class="pagination" aria-label="Pagination">
+        {% if page_obj.has_previous %}
+          <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}" aria-label="Previous page">←</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if num == page_obj.number %}
+            <span class="current" aria-current="page">{{ num }}</span>
+          {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+            <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?{% for k, v in request.GET.items %}{% if k != 'page' %}{{ k }}={{ v }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}" aria-label="Next page">→</a>
+        {% endif %}
+      </nav>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Submit search on Enter
+  const searchInput = document.querySelector('.search-wrap input[type="search"]');
+  if(searchInput){
+    searchInput.addEventListener('keydown', (e) => {
+      if(e.key === 'Enter'){ e.preventDefault(); e.target.form.submit(); }
+    });
+  }
+</script>
+{% endblock %}

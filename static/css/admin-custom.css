@@ -1,0 +1,34 @@
+/* Custom Unfold admin refinements */
+
+/* Smooth radius */
+* { scroll-behavior: smooth; }
+
+/* Sidebar link hover */
+nav a:hover, aside a:hover {
+  transition: background-color .18s ease, color .18s ease;
+}
+
+/* Buttons */
+button, .button, input[type="submit"] {
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+button:hover, .button:hover, input[type="submit"]:hover {
+  transform: translateY(-1px);
+}
+
+/* Table rows */
+table tbody tr:hover {
+  background: rgba(132, 204, 22, .05);
+}
+
+/* Inputs */
+input, textarea, select {
+  transition: border-color .18s ease, box-shadow .18s ease;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: #84cc16 !important;
+  box-shadow: 0 0 0 3px rgba(132, 204, 22, .15) !important;
+}
+
+/* Compact when minimal sidebar active */
+html[data-sidebar="minimal"] nav { width: 68px; }

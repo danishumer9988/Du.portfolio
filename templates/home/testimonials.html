@@ -1,0 +1,945 @@
+<style>
+  /* ---------- Reviews section ---------- */
+  .home-reviews{padding:110px 0 100px}
+
+  /* Header */
+  .reviews-head{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:60px;
+    align-items:end;
+    margin-bottom:56px;
+    padding-bottom:36px;
+    border-bottom:1px solid var(--line);
+  }
+  .reviews-head .eyebrow{display:block;margin-bottom:14px}
+  .reviews-head h2{
+    font-size:clamp(2.2rem,4.2vw,3.4rem);
+    line-height:1.02;
+    letter-spacing:-.05em;
+    font-weight:850;
+    color:var(--text);
+    margin:0;
+    text-wrap:balance;
+  }
+  .reviews-head-side{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    align-items:flex-start;
+  }
+  .reviews-head-side p{
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0;
+    max-width:440px;
+  }
+  .reviews-actions{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    flex-wrap:wrap;
+  }
+  .reviews-avg{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.82rem;
+    color:var(--muted);
+  }
+  .reviews-avg b{
+    color:var(--text);
+    font-weight:800;
+    font-size:1rem;
+    letter-spacing:-.02em;
+  }
+  .reviews-avg .stars{
+    color:var(--accent);
+    letter-spacing:.06em;
+    font-size:.9rem;
+  }
+
+  /* Stage */
+  .review-stage{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:24px;
+    background:
+      radial-gradient(circle at 100% 0%,
+        color-mix(in srgb,var(--accent) 6%,transparent),
+        transparent 50%),
+      linear-gradient(180deg,
+        color-mix(in srgb,var(--surface) 100%,transparent),
+        color-mix(in srgb,var(--surface-2) 30%,var(--surface)));
+    padding:56px 72px;
+    min-height:340px;
+    overflow:hidden;
+  }
+  .review-stage::before{
+    content:"";
+    position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,
+      transparent,
+      color-mix(in srgb,var(--accent) 40%,transparent) 30%,
+      color-mix(in srgb,var(--accent-2) 40%,transparent) 70%,
+      transparent);
+    opacity:.55;
+  }
+
+  /* Big quote icon */
+  .review-mark{
+    position:absolute;
+    top:36px;right:56px;
+    font-size:9rem;
+    line-height:.6;
+    font-family:Georgia,serif;
+    color:color-mix(in srgb,var(--accent) 10%,transparent);
+    pointer-events:none;
+    user-select:none;
+    font-weight:700;
+  }
+
+  /* Slides */
+  .review-slides{
+    position:relative;
+    min-height:220px;
+  }
+  .review-slide{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity .5s ease,transform .6s cubic-bezier(.2,.8,.2,1);
+    transform:translateY(12px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:24px;
+  }
+  .review-slide.active{
+    opacity:1;
+    visibility:visible;
+    transform:translateY(0);
+  }
+
+  /* Stars */
+  .rv-stars-display{
+    display:inline-flex;
+    gap:3px;
+    color:var(--accent);
+    font-size:1.05rem;
+    letter-spacing:.08em;
+  }
+  .rv-stars-display .dim{
+    color:color-mix(in srgb,var(--text) 15%,transparent);
+  }
+
+  /* Quote */
+  .review-quote{
+    font-size:clamp(1.25rem,2.4vw,1.85rem);
+    line-height:1.4;
+    letter-spacing:-.025em;
+    font-weight:500;
+    color:var(--text);
+    margin:0;
+    max-width:880px;
+    text-wrap:balance;
+  }
+
+  /* Author */
+  .review-author{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-top:auto;
+    padding-top:20px;
+  }
+  .review-avatar{
+    width:52px;height:52px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid var(--line-strong);
+    background:var(--surface-2);
+    flex-shrink:0;
+  }
+  .review-avatar-fallback{
+    width:52px;height:52px;
+    border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,
+      color-mix(in srgb,var(--accent) 20%,var(--surface)),
+      color-mix(in srgb,var(--accent-2) 15%,var(--surface)));
+    border:1px solid var(--line-strong);
+    color:var(--text);
+    font-size:1.05rem;
+    font-weight:900;
+    letter-spacing:-.02em;
+    flex-shrink:0;
+  }
+  .review-author-info{
+    display:flex;flex-direction:column;gap:2px;
+  }
+  .review-author-name{
+    font-size:.98rem;
+    font-weight:800;
+    letter-spacing:-.015em;
+    color:var(--text);
+  }
+  .review-author-meta{
+    font-size:.82rem;
+    color:var(--muted);
+    letter-spacing:-.005em;
+  }
+
+  /* Controls */
+  .review-controls{
+    position:absolute;
+    bottom:24px;right:24px;
+    display:flex;
+    gap:8px;
+    z-index:2;
+  }
+  .review-controls button{
+    width:44px;height:44px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);
+    border-radius:50%;
+    background:color-mix(in srgb,var(--bg) 60%,transparent);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    color:var(--text);
+    font-size:1.05rem;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1),
+               border-color .3s ease,
+               color .3s ease,
+               background-color .3s ease;
+    cursor:pointer;
+  }
+  .review-controls button:hover{
+    transform:translateY(-2px);
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    color:var(--accent);
+  }
+  .review-controls button:active{transform:scale(.94)}
+
+  /* Dots / jump to review */
+  .review-dots{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin-top:28px;
+    flex-wrap:wrap;
+  }
+  .review-dot{
+    width:10px;height:10px;
+    border-radius:50%;
+    border:1px solid var(--line-strong);
+    background:transparent;
+    cursor:pointer;
+    padding:0;
+    transition:background-color .3s ease,
+               border-color .3s ease,
+               transform .3s ease;
+  }
+  .review-dot:hover{
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    transform:scale(1.15);
+  }
+  .review-dot.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    box-shadow:0 0 10px color-mix(in srgb,var(--accent) 50%,transparent);
+  }
+
+  /* Empty state */
+  .review-empty{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--muted);
+  }
+  .review-empty h3{
+    font-size:1.2rem;
+    color:var(--text);
+    font-weight:750;
+    margin:0 0 8px;
+  }
+
+  /* ---------- Modal ---------- */
+  .rv-modal{
+    position:fixed;
+    inset:0;
+    z-index:200;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:rgba(4,6,10,.7);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+  }
+  .rv-modal.open{
+    display:flex;
+    animation:rvFade .3s ease;
+  }
+  @keyframes rvFade{from{opacity:0}to{opacity:1}}
+
+  .rv-modal-box{
+    width:min(620px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:var(--surface);
+    border:1px solid var(--line-strong);
+    border-radius:22px;
+    padding:32px 34px 30px;
+    position:relative;
+    transform:translateY(16px) scale(.98);
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 40px 100px rgba(0,0,0,.5);
+  }
+  .rv-modal.open .rv-modal-box{
+    transform:none;
+  }
+  .rv-modal-box::before{
+    content:"";
+    position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,
+      transparent,
+      color-mix(in srgb,var(--accent) 45%,transparent) 30%,
+      color-mix(in srgb,var(--accent-2) 45%,transparent) 70%,
+      transparent);
+    border-radius:inherit;
+    opacity:.65;
+  }
+
+  .rv-modal-head{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:flex-start;
+    margin-bottom:24px;
+  }
+  .rv-modal-head .eyebrow{display:block;margin-bottom:8px}
+  .rv-modal-head h3{
+    font-size:clamp(1.25rem,2vw,1.55rem);
+    font-weight:850;
+    letter-spacing:-.035em;
+    line-height:1.15;
+    color:var(--text);
+    margin:0;
+    max-width:400px;
+    text-wrap:balance;
+  }
+  .rv-modal-close{
+    width:36px;height:36px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);
+    border-radius:50%;
+    background:transparent;
+    color:var(--muted);
+    font-size:1.15rem;
+    flex-shrink:0;
+    transition:color .25s ease,border-color .25s ease,transform .3s ease;
+    cursor:pointer;
+    line-height:1;
+  }
+  .rv-modal-close:hover{
+    color:var(--text);
+    border-color:color-mix(in srgb,var(--text) 20%,var(--line));
+    transform:rotate(90deg);
+  }
+
+  /* Form */
+  .rv-form{display:grid;gap:16px}
+  .rv-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .rv-field{display:flex;flex-direction:column;gap:7px}
+  .rv-field label{
+    font-size:.78rem;
+    font-weight:750;
+    letter-spacing:.02em;
+    color:var(--muted);
+  }
+  .rv-field label .req{color:var(--accent);margin-left:2px}
+
+  .rv-field input[type="text"],
+  .rv-field input[type="email"],
+  .rv-field textarea{
+    width:100%;
+    padding:12px 14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:var(--surface-2);
+    color:var(--text);
+    font-size:.92rem;
+    font-family:inherit;
+    outline:none;
+    transition:border-color .25s ease,background-color .25s ease;
+  }
+  .rv-field input:focus,
+  .rv-field textarea:focus{
+    border-color:color-mix(in srgb,var(--accent) 50%,var(--line));
+    background:var(--surface-3);
+  }
+  .rv-field textarea{resize:vertical;min-height:110px;line-height:1.6}
+  .rv-field input::placeholder,
+  .rv-field textarea::placeholder{color:var(--dim)}
+
+  /* File input */
+  .rv-file{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:12px 14px;
+    border:1px dashed var(--line-strong);
+    border-radius:12px;
+    background:var(--surface-2);
+    font-size:.85rem;
+    color:var(--muted);
+    cursor:pointer;
+    transition:border-color .25s ease,color .25s ease;
+  }
+  .rv-file:hover{
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    color:var(--text);
+  }
+  .rv-file input[type="file"]{
+    position:absolute;
+    width:1px;height:1px;
+    opacity:0;
+    pointer-events:none;
+  }
+  .rv-file-icon{
+    width:30px;height:30px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:8px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    color:var(--accent);
+    flex-shrink:0;
+  }
+  .rv-file-name{
+    color:var(--text);
+    font-weight:600;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width:220px;
+  }
+
+  /* Star picker */
+  .rv-star-picker{
+    display:inline-flex;
+    gap:6px;
+    font-size:1.8rem;
+    line-height:1;
+    color:color-mix(in srgb,var(--text) 18%,transparent);
+    user-select:none;
+    align-self:flex-start;
+  }
+  .rv-star-picker span{
+    cursor:pointer;
+    transition:color .15s ease,transform .2s cubic-bezier(.2,.8,.2,1);
+    display:inline-block;
+  }
+  .rv-star-picker span:hover{transform:scale(1.15)}
+  .rv-star-picker span.on{color:var(--accent)}
+  .rv-hidden-rating{
+    position:absolute;
+    opacity:0;
+    pointer-events:none;
+    width:0;height:0;
+  }
+
+  /* Feedback */
+  .rv-error{
+    display:none;
+    padding:10px 14px;
+    border-radius:10px;
+    background:color-mix(in srgb,#ff6b6b 12%,transparent);
+    border:1px solid color-mix(in srgb,#ff6b6b 30%,transparent);
+    color:#ff9d9d;
+    font-size:.85rem;
+    line-height:1.5;
+  }
+  .rv-error.show{display:block}
+
+  .rv-success{
+    display:none;
+    padding:24px;
+    text-align:center;
+    border-radius:14px;
+    background:color-mix(in srgb,var(--accent) 8%,transparent);
+    border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  }
+  .rv-success.show{display:block}
+  .rv-success-icon{
+    width:44px;height:44px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    background:var(--accent);
+    color:#071007;
+    font-size:1.4rem;
+    font-weight:900;
+    margin-bottom:14px;
+  }
+  .rv-success h4{
+    margin:0 0 6px;
+    font-size:1.05rem;
+    color:var(--text);
+    font-weight:800;
+    letter-spacing:-.02em;
+  }
+  .rv-success p{
+    margin:0;
+    color:var(--muted);
+    font-size:.88rem;
+    line-height:1.55;
+  }
+
+  /* Submit */
+  .rv-submit{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    width:100%;
+    padding:13px 18px;
+    border:0;
+    border-radius:999px;
+    background:var(--accent);
+    color:#071007;
+    font-size:.92rem;
+    font-weight:800;
+    letter-spacing:-.005em;
+    cursor:pointer;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease;
+  }
+  .rv-submit:hover{
+    transform:translateY(-1px);
+    box-shadow:0 12px 30px color-mix(in srgb,var(--accent) 35%,transparent);
+  }
+  .rv-submit:active{transform:scale(.98)}
+  .rv-submit:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    transform:none;
+  }
+
+  /* Responsive */
+  @media (max-width:980px){
+    .home-reviews{padding:90px 0 80px}
+    .reviews-head{
+      grid-template-columns:1fr;
+      gap:24px;
+      margin-bottom:44px;
+      padding-bottom:32px;
+    }
+    .reviews-head-side p{max-width:100%}
+    .review-stage{padding:44px 40px 44px}
+    .review-mark{font-size:6rem;top:24px;right:28px}
+  }
+
+  @media (max-width:720px){
+    .home-reviews{padding:72px 0 60px}
+    .reviews-head{margin-bottom:32px;padding-bottom:24px}
+    .review-stage{
+      padding:32px 24px 90px;
+      border-radius:18px;
+      min-height:280px;
+    }
+    .review-mark{font-size:4.5rem;top:18px;right:20px}
+    .review-quote{font-size:1.1rem;line-height:1.5}
+    .review-author-avatar,
+    .review-avatar,
+    .review-avatar-fallback{width:44px;height:44px;font-size:.92rem}
+    .review-author-name{font-size:.92rem}
+    .review-author-meta{font-size:.78rem}
+    .review-controls{bottom:18px;right:18px;gap:6px}
+    .review-controls button{width:38px;height:38px;font-size:.95rem}
+    .review-dots{margin-top:22px}
+
+    .rv-modal{padding:16px}
+    .rv-modal-box{padding:24px 22px 22px;border-radius:18px}
+    .rv-row{grid-template-columns:1fr}
+    .rv-file-name{max-width:150px}
+    .rv-star-picker{font-size:1.6rem;gap:4px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .review-slide,
+    .rv-modal-box,
+    .review-controls button,
+    .rv-star-picker span{transition:none}
+  }
+</style>
+
+<section class="section home-reviews" id="reviews">
+  <div class="wrap">
+
+    <!-- Header -->
+    <header class="reviews-head reveal">
+      <div>
+        <span class="eyebrow">Client reviews</span>
+        <h2 class="kicker" style="margin:0">Words from the people I build with.</h2>
+      </div>
+      <div class="reviews-head-side">
+        <p>Feedback from clients and collaborators across recent engagements.</p>
+
+        <div class="reviews-actions">
+          {% if reviews %}
+            <div class="reviews-avg">
+              <b>{{ reviews|length }}</b>
+              <span>review{{ reviews|length|pluralize }}</span>
+            </div>
+          {% endif %}
+          <button class="btn ghost" type="button" id="rvOpen">
+            Add your review <span class="arrow">↗</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stage -->
+    {% if reviews %}
+      <div class="review-stage reveal">
+        <span class="review-mark" aria-hidden="true">"</span>
+
+        <div class="review-slides" id="rvSlides">
+          {% for review in reviews %}
+            <article class="review-slide{% if forloop.first %} active{% endif %}" data-index="{{ forloop.counter0 }}">
+
+              <div class="rv-stars-display" aria-label="{{ review.rating }} out of 5 stars">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= review.rating %}★{% else %}<span class="dim">★</span>{% endif %}
+                {% endfor %}
+              </div>
+
+              <p class="review-quote">{{ review.review_text }}</p>
+
+              <div class="review-author">
+                {% if review.profile_picture %}
+                  <img class="review-avatar" src="{{ review.profile_picture.url }}" alt="{{ review.name }}">
+                {% else %}
+                  <span class="review-avatar-fallback">{{ review.name|slice:":1"|upper }}</span>
+                {% endif %}
+                <div class="review-author-info">
+                  <span class="review-author-name">{{ review.name }}</span>
+                  <span class="review-author-meta">
+                    {% if review.role %}{{ review.role }}{% endif %}
+                    {% if review.role and review.company %} · {% endif %}
+                    {% if review.company %}{{ review.company }}{% endif %}
+                  </span>
+                </div>
+              </div>
+
+            </article>
+          {% endfor %}
+        </div>
+
+        {% if reviews|length > 1 %}
+          <div class="review-controls">
+            <button type="button" id="rvPrev" aria-label="Previous review">←</button>
+            <button type="button" id="rvNext" aria-label="Next review">→</button>
+          </div>
+        {% endif %}
+      </div>
+
+      {% if reviews|length > 1 %}
+        <div class="review-dots" id="rvDots" role="tablist" aria-label="Review navigation">
+          {% for review in reviews %}
+            <button type="button"
+                    class="review-dot{% if forloop.first %} active{% endif %}"
+                    data-index="{{ forloop.counter0 }}"
+                    aria-label="Review {{ forloop.counter }} by {{ review.name }}"></button>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="review-stage reveal">
+        <div class="review-empty">
+          <h3>No reviews yet.</h3>
+          <p>Be the first to share your experience.</p>
+        </div>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<!-- Modal -->
+<div class="rv-modal" id="rvModal" role="dialog" aria-modal="true" aria-labelledby="rvModalTitle">
+  <div class="rv-modal-box">
+    <div class="rv-modal-head">
+      <div>
+        <span class="eyebrow">Share feedback</span>
+        <h3 id="rvModalTitle">Tell future clients what it was like to work together.</h3>
+      </div>
+      <button class="rv-modal-close" type="button" id="rvClose" aria-label="Close">✕</button>
+    </div>
+
+    <form class="rv-form" id="rvForm" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+
+      <div class="rv-field">
+        <label for="rvName">Your name <span class="req">*</span></label>
+        <input type="text" id="rvName" name="name" placeholder="Your name" autocomplete="name" required>
+      </div>
+
+      <div class="rv-row">
+        <div class="rv-field">
+          <label for="rvRole">Role</label>
+          <input type="text" id="rvRole" name="role" placeholder="e.g. Founder">
+        </div>
+        <div class="rv-field">
+          <label for="rvCompany">Company</label>
+          <input type="text" id="rvCompany" name="company" placeholder="e.g. Acme Inc.">
+        </div>
+      </div>
+
+      <div class="rv-field">
+        <label>Profile picture</label>
+        <label class="rv-file" for="rvPic">
+          <span class="rv-file-icon">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+            </svg>
+          </span>
+          <span class="rv-file-name" id="rvFileName">Choose a file…</span>
+          <input type="file" id="rvPic" name="profile_picture" accept="image/*">
+        </label>
+      </div>
+
+      <div class="rv-field">
+        <label>Rating <span class="req">*</span></label>
+        <div class="rv-star-picker" id="rvStarPicker" role="radiogroup" aria-label="Rating">
+          <span data-value="1" role="radio" aria-label="1 star" tabindex="0">★</span>
+          <span data-value="2" role="radio" aria-label="2 stars" tabindex="0">★</span>
+          <span data-value="3" role="radio" aria-label="3 stars" tabindex="0">★</span>
+          <span data-value="4" role="radio" aria-label="4 stars" tabindex="0">★</span>
+          <span data-value="5" role="radio" aria-label="5 stars" tabindex="0">★</span>
+        </div>
+        <input type="hidden" name="rating" id="rvRating" value="">
+      </div>
+
+      <div class="rv-field">
+        <label for="rvText">Your review <span class="req">*</span></label>
+        <textarea id="rvText" name="review_text" placeholder="Share your experience…" required></textarea>
+      </div>
+
+      <div class="rv-error" id="rvError" role="alert"></div>
+
+      <button class="rv-submit" type="submit" id="rvSubmit">
+        Submit review <span>↗</span>
+      </button>
+
+      <div class="rv-success" id="rvSuccess">
+        <div class="rv-success-icon">✓</div>
+        <h4>Thank you for your review.</h4>
+        <p>Your review has been submitted for approval and will appear here once reviewed.</p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* =================== Reviews carousel =================== */
+  const slides = Array.from(document.querySelectorAll('.review-slide'));
+  const dots = Array.from(document.querySelectorAll('.review-dot'));
+  const prev = document.getElementById('rvPrev');
+  const next = document.getElementById('rvNext');
+  let current = 0;
+  let autoTimer = null;
+
+  function show(i){
+    if(!slides.length) return;
+    current = (i + slides.length) % slides.length;
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === current));
+    dots.forEach((d, idx) => d.classList.toggle('active', idx === current));
+  }
+
+  function nextSlide(){ show(current + 1); }
+  function prevSlide(){ show(current - 1); }
+
+  if(prev) prev.addEventListener('click', () => { prevSlide(); restartAuto(); });
+  if(next) next.addEventListener('click', () => { nextSlide(); restartAuto(); });
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      show(parseInt(dot.dataset.index, 10));
+      restartAuto();
+    });
+  });
+
+  /* Auto-rotate every 6s, pause on hover */
+  const stage = document.querySelector('.review-stage');
+  function startAuto(){
+    if(slides.length < 2) return;
+    if(autoTimer) return;
+    autoTimer = setInterval(nextSlide, 6000);
+  }
+  function stopAuto(){
+    if(autoTimer){ clearInterval(autoTimer); autoTimer = null; }
+  }
+  function restartAuto(){
+    stopAuto();
+    startAuto();
+  }
+  if(stage){
+    stage.addEventListener('mouseenter', stopAuto);
+    stage.addEventListener('mouseleave', startAuto);
+  }
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    startAuto();
+  }
+
+  /* Keyboard */
+  document.addEventListener('keydown', (e) => {
+    if(!slides.length) return;
+    if(document.activeElement && document.activeElement.closest('.rv-modal')) return;
+    if(e.key === 'ArrowLeft'){ prevSlide(); restartAuto(); }
+    if(e.key === 'ArrowRight'){ nextSlide(); restartAuto(); }
+  });
+
+  /* =================== Modal =================== */
+  const modal = document.getElementById('rvModal');
+  const openBtn = document.getElementById('rvOpen');
+  const closeBtn = document.getElementById('rvClose');
+  const form = document.getElementById('rvForm');
+  const errorBox = document.getElementById('rvError');
+  const successBox = document.getElementById('rvSuccess');
+  const submitBtn = document.getElementById('rvSubmit');
+  const fileName = document.getElementById('rvFileName');
+  const fileInput = document.getElementById('rvPic');
+
+  function openModal(){
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => { const f = document.getElementById('rvName'); if(f) f.focus(); }, 200);
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  if(openBtn) openBtn.addEventListener('click', openModal);
+  if(closeBtn) closeBtn.addEventListener('click', closeModal);
+  if(modal) modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && modal && modal.classList.contains('open')) closeModal();
+  });
+
+  /* File name display */
+  if(fileInput){
+    fileInput.addEventListener('change', () => {
+      if(fileInput.files && fileInput.files[0]){
+        fileName.textContent = fileInput.files[0].name;
+      } else {
+        fileName.textContent = 'Choose a file…';
+      }
+    });
+  }
+
+  /* =================== Star picker =================== */
+  const starPicker = document.getElementById('rvStarPicker');
+  const ratingInput = document.getElementById('rvRating');
+  let currentRating = 0;
+
+  function paintStars(n){
+    if(!starPicker) return;
+    Array.from(starPicker.children).forEach((star, idx) => {
+      star.classList.toggle('on', idx < n);
+    });
+  }
+
+  if(starPicker){
+    Array.from(starPicker.children).forEach((star) => {
+      const val = parseInt(star.dataset.value, 10);
+
+      star.addEventListener('mouseenter', () => paintStars(val));
+      star.addEventListener('focus', () => paintStars(val));
+      star.addEventListener('click', () => {
+        currentRating = val;
+        if(ratingInput) ratingInput.value = String(val);
+        paintStars(val);
+      });
+      star.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          currentRating = val;
+          if(ratingInput) ratingInput.value = String(val);
+          paintStars(val);
+        }
+      });
+    });
+
+    starPicker.addEventListener('mouseleave', () => paintStars(currentRating));
+  }
+
+  /* =================== Submit =================== */
+  function clearError(){ if(errorBox){ errorBox.classList.remove('show'); errorBox.textContent = ''; } }
+  function showError(msg){
+    if(!errorBox) return;
+    errorBox.textContent = msg;
+    errorBox.classList.add('show');
+  }
+
+  if(form){
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+
+      const name = form.querySelector('[name="name"]').value.trim();
+      const reviewText = form.querySelector('[name="review_text"]').value.trim();
+      const rating = form.querySelector('[name="rating"]').value;
+
+      if(!name){ showError('Please enter your name.'); return; }
+      if(!rating){ showError('Please select a rating.'); return; }
+      if(reviewText.length < 12){ showError('Please provide a little more detail in your review.'); return; }
+
+      submitBtn.disabled = true;
+      const originalLabel = submitBtn.innerHTML;
+      submitBtn.innerHTML = 'Sending…';
+
+      try {
+        const formData = new FormData(form);
+        const csrf = form.querySelector('[name="csrfmiddlewaretoken"]').value;
+
+        const res = await fetch('/reviews/submit/', {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrf },
+          body: formData,
+          credentials: 'same-origin',
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if(res.ok && data.ok){
+          form.querySelectorAll('.rv-field, .rv-submit, .rv-error').forEach(el => {
+            el.style.display = 'none';
+          });
+          successBox.classList.add('show');
+        } else {
+          let msg = 'Something went wrong. Please try again.';
+          if(data.errors){
+            const first = Object.values(data.errors)[0];
+            if(Array.isArray(first) && first[0]) msg = first[0];
+          } else if(data.error){
+            msg = data.error;
+          }
+          showError(msg);
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalLabel;
+        }
+      } catch(err){
+        showError('Network error. Please check your connection and try again.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalLabel;
+      }
+    });
+  }
+})();
+</script>

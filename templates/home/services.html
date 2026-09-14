@@ -1,0 +1,256 @@
+<style>
+  /* ---------- Services ---------- */
+  .services{padding:110px 0 100px}
+
+  .services-head{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:60px;
+    align-items:end;
+    margin-bottom:56px;
+    padding-bottom:40px;
+    border-bottom:1px solid var(--line);
+  }
+  .services-head .eyebrow{display:block;margin-bottom:14px}
+  .services-head h2{
+    font-size:clamp(2.2rem,4.2vw,3.4rem);
+    line-height:1.02;
+    letter-spacing:-.05em;
+    font-weight:850;
+    color:var(--text);
+    margin:0;
+    text-wrap:balance;
+  }
+  .services-head .head-side{
+    display:flex;flex-direction:column;gap:20px;align-items:flex-start;
+  }
+  .services-head p{
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0;
+    max-width:480px;
+  }
+
+  /* Grid */
+  .services-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+  }
+
+  .service-card{
+    position:relative;
+    border:1px solid var(--line);
+    border-radius:22px;
+    background:linear-gradient(180deg,
+      color-mix(in srgb,var(--surface) 100%,transparent),
+      color-mix(in srgb,var(--surface-2) 35%,var(--surface)));
+    padding:30px 30px 28px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    transition:border-color .35s ease,transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s ease;
+  }
+  .service-card::before{
+    content:"";
+    position:absolute;inset:0;
+    background:radial-gradient(circle at 100% 0%,
+      color-mix(in srgb,var(--accent) 8%,transparent),
+      transparent 55%);
+    opacity:0;
+    transition:opacity .5s ease;
+    pointer-events:none;
+  }
+  .service-card:hover{
+    border-color:color-mix(in srgb,var(--accent) 32%,var(--line));
+    transform:translateY(-4px);
+    box-shadow:var(--shadow);
+  }
+  .service-card:hover::before{opacity:1}
+
+  /* Card top: icon + index */
+  .service-top{
+    display:flex;align-items:center;justify-content:space-between;
+    margin-bottom:24px;
+  }
+
+  .service-icon{
+    width:56px;height:56px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:var(--surface);
+    font-size:1.35rem;
+    font-weight:900;
+    letter-spacing:-.04em;
+    color:var(--text);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1),border-color .3s ease,color .3s ease;
+    flex-shrink:0;
+    position:relative;
+    z-index:1;
+  }
+  .service-card:hover .service-icon{
+    transform:translateY(-2px) rotate(-4deg);
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));
+    color:var(--accent);
+  }
+  .service-icon.mono{
+    font-size:.95rem;
+    font-family:ui-monospace,SFMono-Regular,monospace;
+    letter-spacing:0;
+  }
+
+  .service-index{
+    font-size:.72rem;
+    letter-spacing:.16em;
+    font-weight:800;
+    color:var(--muted);
+    font-variant-numeric:tabular-nums;
+    transition:color .3s ease;
+  }
+  .service-card:hover .service-index{color:var(--accent)}
+
+  /* Content */
+  .service-title{
+    font-size:clamp(1.15rem,1.5vw,1.35rem);
+    font-weight:800;
+    letter-spacing:-.03em;
+    line-height:1.2;
+    color:var(--text);
+    margin:0 0 12px;
+  }
+
+  .service-desc{
+    font-size:.94rem;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0 0 24px;
+    flex:1;
+  }
+
+  /* Feature chips */
+  .service-features{
+    display:flex;flex-wrap:wrap;gap:7px;
+    padding-top:20px;
+    border-top:1px solid var(--line);
+  }
+  .service-feature{
+    display:inline-flex;align-items:center;
+    padding:6px 11px;
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    background:color-mix(in srgb,var(--bg) 40%,transparent);
+    color:var(--muted);
+    font-size:.76rem;
+    font-weight:600;
+    letter-spacing:-.005em;
+    white-space:nowrap;
+    transition:color .25s ease,border-color .25s ease,background-color .25s ease;
+  }
+  .service-card:hover .service-feature{
+    color:var(--text);
+    border-color:color-mix(in srgb,var(--text) 20%,var(--line-strong));
+  }
+  .service-feature:hover{
+    color:var(--accent) !important;
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line)) !important;
+    background:color-mix(in srgb,var(--accent) 8%,transparent);
+  }
+
+  /* Price if present */
+  .service-price{
+    display:inline-flex;align-items:baseline;gap:6px;
+    margin-top:20px;
+    font-size:.85rem;
+    color:var(--muted);
+  }
+  .service-price b{
+    color:var(--text);
+    font-size:1rem;
+    font-weight:800;
+    letter-spacing:-.02em;
+  }
+
+  /* Footer CTA link */
+  .services-foot{
+    display:flex;justify-content:center;
+    margin-top:56px;
+  }
+  .services-foot .btn{font-weight:600}
+
+  /* Responsive */
+  @media (max-width:980px){
+    .services{padding:90px 0 80px}
+    .services-head{grid-template-columns:1fr;gap:24px;margin-bottom:44px;padding-bottom:32px}
+    .services-head p{max-width:100%}
+    .services-grid{grid-template-columns:1fr}
+  }
+
+  @media (max-width:720px){
+    .services{padding:72px 0 60px}
+    .services-head{margin-bottom:32px}
+    .service-card{padding:24px 22px 22px;border-radius:18px}
+    .service-icon{width:48px;height:48px;border-radius:14px;font-size:1.1rem}
+    .service-title{font-size:1.1rem}
+    .service-desc{font-size:.9rem}
+    .service-feature{font-size:.72rem;padding:5px 9px}
+  }
+</style>
+
+<section class="section services" id="services">
+  <div class="wrap">
+
+    <header class="services-head reveal">
+      <div>
+        <span class="eyebrow">Services</span>
+        <h2>From idea to product.</h2>
+      </div>
+      <div class="head-side">
+        <p>Focused engagements across full-stack development, Django and React, APIs, data modelling, and delivery — scoped to ship on time.</p>
+        <a class="btn ghost" href="{% url 'services' %}">All services <span class="arrow">→</span></a>
+      </div>
+    </header>
+
+    {% if services %}
+      <div class="services-grid">
+        {% for service in services|slice:":6" %}
+          <article class="service-card reveal">
+
+            <div class="service-top">
+              <span class="service-icon {% if service.icon|length > 2 %}mono{% endif %}">
+                {% if service.icon %}{{ service.icon }}{% else %}{{ service.title|slice:":2"|upper }}{% endif %}
+              </span>
+              <span class="service-index">0{{ forloop.counter }}</span>
+            </div>
+
+            <h3 class="service-title">{{ service.title }}</h3>
+            <p class="service-desc">{{ service.short_description }}</p>
+
+            {% if service.feature_list %}
+              <div class="service-features">
+                {% for feature in service.feature_list|slice:":4" %}
+                  <span class="service-feature">{{ feature }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+            {% if service.starting_price %}
+              <div class="service-price">
+                From <b>{{ service.starting_price }}</b>
+              </div>
+            {% endif %}
+
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="surface">Add services through Admin.</div>
+    {% endif %}
+
+    <div class="services-foot reveal">
+      <a class="btn" href="{% url 'services' %}">View all services <span class="arrow">→</span></a>
+    </div>
+
+  </div>
+</section>

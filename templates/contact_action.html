@@ -1,0 +1,555 @@
+{% extends "base.html" %}
+
+{% block title %}{% if action == "approve" %}Approved{% else %}Rejected{% endif %} — {{ site.site_name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ---------- Contact action page ---------- */
+  .action-page{
+    position:relative;
+    padding:80px 0 60px;
+    overflow:hidden;
+  }
+
+  /* Ambient background */
+  .action-page::before{
+    content:"";
+    position:absolute;
+    top:-20%;left:50%;
+    transform:translateX(-50%);
+    width:min(800px,90vw);height:min(800px,90vw);
+    background:radial-gradient(circle,
+      color-mix(in srgb,var(--accent) 8%,transparent) 0%,
+      transparent 65%);
+    filter:blur(40px);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .action-wrap{
+    position:relative;
+    z-index:1;
+    max-width:640px;
+    margin:0 auto;
+  }
+
+  /* Status block */
+  .action-status{
+    text-align:center;
+    margin-bottom:32px;
+  }
+
+  .action-icon{
+    width:80px;height:80px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    font-size:2.2rem;
+    font-weight:900;
+    margin-bottom:22px;
+    animation:actionPop .6s cubic-bezier(.2,.8,.2,1);
+  }
+  @keyframes actionPop{
+    0%{transform:scale(.4);opacity:0}
+    60%{transform:scale(1.1)}
+    100%{transform:scale(1);opacity:1}
+  }
+  .action-icon.approve{
+    background:var(--accent);
+    color:#071007;
+    box-shadow:0 0 0 12px color-mix(in srgb,var(--accent) 12%,transparent),
+               0 0 0 28px color-mix(in srgb,var(--accent) 5%,transparent);
+  }
+  .action-icon.reject{
+    background:color-mix(in srgb,#ff6b6b 18%,var(--surface));
+    color:#ff9d9d;
+    border:1px solid color-mix(in srgb,#ff6b6b 45%,var(--line));
+    box-shadow:0 0 0 12px color-mix(in srgb,#ff6b6b 8%,transparent);
+  }
+  .action-icon.warn{
+    background:color-mix(in srgb,#fbbf24 20%,var(--surface));
+    color:#fbbf24;
+    border:1px solid color-mix(in srgb,#fbbf24 45%,var(--line));
+    box-shadow:0 0 0 12px color-mix(in srgb,#fbbf24 8%,transparent);
+  }
+
+  .action-eyebrow{
+    display:inline-block;
+    font-size:.68rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    font-weight:800;
+    padding:5px 12px;
+    border-radius:999px;
+    margin-bottom:16px;
+  }
+  .action-eyebrow.approve{
+    background:color-mix(in srgb,var(--accent) 14%,transparent);
+    color:var(--accent);
+    border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+  }
+  .action-eyebrow.reject{
+    background:color-mix(in srgb,#ff6b6b 12%,transparent);
+    color:#ff9d9d;
+    border:1px solid color-mix(in srgb,#ff6b6b 30%,transparent);
+  }
+  .action-eyebrow.warn{
+    background:color-mix(in srgb,#fbbf24 12%,transparent);
+    color:#fbbf24;
+    border:1px solid color-mix(in srgb,#fbbf24 30%,transparent);
+  }
+
+  .action-title{
+    font-size:clamp(1.6rem,3.6vw,2.4rem);
+    font-weight:850;
+    letter-spacing:-.045em;
+    line-height:1.15;
+    color:var(--text);
+    margin:0 0 14px;
+    text-wrap:balance;
+  }
+
+  .action-text{
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--muted);
+    max-width:480px;
+    margin:0 auto;
+  }
+  .action-text strong{color:var(--text);font-weight:700}
+
+  /* Detail card */
+  .action-card{
+    margin-top:36px;
+    padding:28px 30px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    background:
+      radial-gradient(circle at 100% 0%,
+        color-mix(in srgb,var(--accent) 5%,transparent),
+        transparent 55%),
+      linear-gradient(180deg,
+        color-mix(in srgb,var(--surface) 100%,transparent),
+        color-mix(in srgb,var(--surface-2) 30%,var(--surface)));
+    position:relative;
+    overflow:hidden;
+  }
+  .action-card::before{
+    content:"";
+    position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,
+      transparent,
+      color-mix(in srgb,var(--accent) 45%,transparent) 30%,
+      color-mix(in srgb,var(--accent-2) 45%,transparent) 70%,
+      transparent);
+    opacity:.65;
+  }
+
+  .action-card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    padding-bottom:18px;
+    margin-bottom:20px;
+    border-bottom:1px solid var(--line);
+  }
+  .action-card-label{
+    font-size:.68rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+  }
+  .action-card-status{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:5px 12px;
+    border-radius:999px;
+    font-size:.7rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:800;
+  }
+  .action-card-status.pending{
+    background:color-mix(in srgb,var(--accent) 14%,transparent);
+    color:var(--accent);
+  }
+  .action-card-status.approved{
+    background:color-mix(in srgb,var(--accent-2) 14%,transparent);
+    color:var(--accent-2);
+  }
+  .action-card-status.rejected{
+    background:color-mix(in srgb,#ff6b6b 14%,transparent);
+    color:#ff9d9d;
+  }
+  .action-card-status::before{
+    content:"";
+    width:5px;height:5px;border-radius:50%;
+    background:currentColor;
+    box-shadow:0 0 8px currentColor;
+  }
+
+  .action-facts{
+    display:grid;
+    gap:14px;
+    margin:0;
+  }
+  .action-facts > div{
+    display:grid;
+    grid-template-columns:130px 1fr;
+    gap:16px;
+    align-items:baseline;
+  }
+  .action-facts dt{
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+  }
+  .action-facts dd{
+    margin:0;
+    font-size:.94rem;
+    font-weight:600;
+    color:var(--text);
+    letter-spacing:-.01em;
+    word-break:break-word;
+  }
+  .action-facts dd a{
+    color:var(--accent);
+    text-decoration:none;
+    transition:opacity .25s ease;
+  }
+  .action-facts dd a:hover{opacity:.8}
+
+  /* What happened list */
+  .action-next{
+    margin-top:36px;
+  }
+  .action-next-label{
+    font-size:.68rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+    margin-bottom:16px;
+    text-align:center;
+  }
+  .action-steps{
+    display:grid;
+    gap:12px;
+    max-width:480px;
+    margin:0 auto;
+  }
+  .action-step{
+    display:grid;
+    grid-template-columns:32px 1fr;
+    gap:14px;
+    align-items:start;
+    padding:16px 18px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:var(--surface);
+    transition:border-color .3s ease,transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .action-step:hover{
+    border-color:color-mix(in srgb,var(--accent) 30%,var(--line));
+    transform:translateY(-2px);
+  }
+  .action-step-icon{
+    width:32px;height:32px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:50%;
+    background:color-mix(in srgb,var(--accent) 14%,var(--surface-2));
+    color:var(--accent);
+    font-size:.8rem;
+    font-weight:900;
+    flex-shrink:0;
+  }
+  .action-step-text{
+    font-size:.88rem;
+    line-height:1.55;
+    color:var(--muted);
+  }
+  .action-step-text strong{
+    display:block;
+    color:var(--text);
+    font-weight:700;
+    font-size:.92rem;
+    margin-bottom:2px;
+    letter-spacing:-.005em;
+  }
+
+  /* Actions */
+  .action-buttons{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:40px;
+  }
+
+  /* Stats row */
+  .action-stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:0;
+    margin-top:44px;
+    padding-top:28px;
+    border-top:1px solid var(--line);
+  }
+  .action-stat{
+    text-align:center;
+    padding:0 12px;
+    position:relative;
+  }
+  .action-stat + .action-stat::before{
+    content:"";
+    position:absolute;
+    left:0;top:10%;bottom:10%;
+    width:1px;
+    background:var(--line);
+  }
+  .action-stat b{
+    display:block;
+    font-size:1.6rem;
+    font-weight:900;
+    letter-spacing:-.04em;
+    line-height:1;
+    color:var(--text);
+    margin-bottom:6px;
+  }
+  .action-stat b.pending{color:var(--accent)}
+  .action-stat b.approved{color:var(--accent-2)}
+  .action-stat b.rejected{color:#ff9d9d}
+  .action-stat span{
+    font-size:.66rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+  }
+
+  /* Responsive */
+  @media (max-width:720px){
+    .action-page{padding:56px 0 40px}
+    .action-icon{width:64px;height:64px;font-size:1.8rem;margin-bottom:18px}
+    .action-title{font-size:1.6rem}
+    .action-text{font-size:.94rem}
+    .action-card{padding:22px 20px;border-radius:16px;margin-top:28px}
+    .action-card-head{flex-direction:column;align-items:flex-start;gap:10px}
+    .action-facts > div{grid-template-columns:1fr;gap:4px}
+    .action-facts dt{font-size:.66rem}
+    .action-facts dd{font-size:.88rem}
+    .action-step{padding:14px 16px}
+    .action-step-text{font-size:.84rem}
+    .action-step-text strong{font-size:.88rem}
+    .action-buttons{margin-top:32px}
+    .action-stats{margin-top:32px}
+    .action-stat b{font-size:1.35rem}
+    .action-stat span{font-size:.6rem}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .action-icon{animation:none}
+    .action-step{transition:none}
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="action-page">
+  <div class="wrap">
+    <div class="action-wrap">
+
+      <!-- Status -->
+      <div class="action-status reveal">
+
+        {% if already_handled %}
+          <div class="action-icon warn">!</div>
+          <span class="action-eyebrow warn">Already handled</span>
+          <h1 class="action-title">This message was already {{ instance.get_status_display|lower }}.</h1>
+          <p class="action-text">
+            No further action was taken. The links in the notification email are one-time use only.
+          </p>
+        {% elif action == "approve" and email_error %}
+          <div class="action-icon warn">!</div>
+          <span class="action-eyebrow warn">Email issue</span>
+          <h1 class="action-title">Approved, but the confirmation didn't send.</h1>
+          <p class="action-text">
+            The message is marked as approved in the admin, but the confirmation email to <strong>{{ instance.email }}</strong> couldn't be delivered. Check the server logs.
+          </p>
+        {% elif action == "approve" %}
+          <div class="action-icon approve">✓</div>
+          <span class="action-eyebrow approve">Approved</span>
+          <h1 class="action-title">Confirmation sent to {{ instance.name }}.</h1>
+          <p class="action-text">
+            They received an email at <strong>{{ instance.email }}</strong> letting them know you'll be in touch within 24 hours.
+          </p>
+        {% else %}
+          <div class="action-icon reject">✕</div>
+          <span class="action-eyebrow reject">Rejected</span>
+          <h1 class="action-title">Message marked as rejected.</h1>
+          <p class="action-text">
+            No confirmation email was sent. The message is still saved in the admin if you need it.
+          </p>
+        {% endif %}
+
+      </div>
+
+      <!-- Detail card -->
+      <div class="action-card reveal">
+        <div class="action-card-head">
+          <span class="action-card-label">Message details</span>
+          <span class="action-card-status {% if instance.status == 'approved' %}approved{% elif instance.status == 'rejected' %}rejected{% else %}pending{% endif %}">
+            {{ instance.get_status_display }}
+          </span>
+        </div>
+
+        <dl class="action-facts">
+          <div>
+            <dt>From</dt>
+            <dd>{{ instance.name }}</dd>
+          </div>
+          <div>
+            <dt>Email</dt>
+            <dd><a href="mailto:{{ instance.email }}">{{ instance.email }}</a></dd>
+          </div>
+          <div>
+            <dt>Subject</dt>
+            <dd>{{ instance.subject }}</dd>
+          </div>
+          {% if instance.project_type %}
+            <div>
+              <dt>Project type</dt>
+              <dd>{{ instance.project_type }}</dd>
+            </div>
+          {% endif %}
+          {% if instance.budget %}
+            <div>
+              <dt>Budget</dt>
+              <dd>{{ instance.budget }}</dd>
+            </div>
+          {% endif %}
+          <div>
+            <dt>Received</dt>
+            <dd>{{ instance.created_at|date:"d M Y · H:i" }}</dd>
+          </div>
+          {% if instance.approved_at %}
+            <div>
+              <dt>Approved</dt>
+              <dd>{{ instance.approved_at|date:"d M Y · H:i" }}</dd>
+            </div>
+          {% endif %}
+          {% if instance.rejected_at %}
+            <div>
+              <dt>Rejected</dt>
+              <dd>{{ instance.rejected_at|date:"d M Y · H:i" }}</dd>
+            </div>
+          {% endif %}
+          {% if instance.reply_sent_at %}
+            <div>
+              <dt>Reply sent</dt>
+              <dd>{{ instance.reply_sent_at|date:"d M Y · H:i" }}</dd>
+            </div>
+          {% endif %}
+          <div>
+            <dt>Reference</dt>
+            <dd style="font-family:ui-monospace,SFMono-Regular,monospace;font-size:.82rem;color:var(--muted)">#{{ instance.token|stringformat:"s"|slice:":8" }}</dd>
+          </div>
+        </dl>
+      </div>
+
+      <!-- What happened / what's next -->
+      {% if not already_handled and action == "approve" and not email_error %}
+        <div class="action-next reveal">
+          <div class="action-next-label">What happens next</div>
+          <div class="action-steps">
+
+            <div class="action-step">
+              <span class="action-step-icon">1</span>
+              <span class="action-step-text">
+                <strong>Confirmation delivered</strong>
+                {{ instance.name }} received an automated email acknowledging their message.
+              </span>
+            </div>
+
+            <div class="action-step">
+              <span class="action-step-icon">2</span>
+              <span class="action-step-text">
+                <strong>You have 24 hours</strong>
+                Reply to them directly to follow up — the email comes straight to you when they respond.
+              </span>
+            </div>
+
+            <div class="action-step">
+              <span class="action-step-icon">3</span>
+              <span class="action-step-text">
+                <strong>Status tracked</strong>
+                This message is marked <em style="color:var(--accent-2);font-style:normal;">Approved</em> in the admin.
+              </span>
+            </div>
+
+          </div>
+        </div>
+      {% elif not already_handled and action == "reject" %}
+        <div class="action-next reveal">
+          <div class="action-next-label">What happens next</div>
+          <div class="action-steps">
+
+            <div class="action-step">
+              <span class="action-step-icon">1</span>
+              <span class="action-step-text">
+                <strong>No email sent</strong>
+                The sender was not notified — they won't know this was rejected.
+              </span>
+            </div>
+
+            <div class="action-step">
+              <span class="action-step-icon">2</span>
+              <span class="action-step-text">
+                <strong>Saved in admin</strong>
+                This message is still available in the admin if you change your mind later.
+              </span>
+            </div>
+
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Action buttons -->
+      <div class="action-buttons reveal">
+        <a class="btn primary" href="{% url 'home' %}">
+          Back to site <span class="arrow">→</span>
+        </a>
+        <a class="btn ghost" href="/admin/main/contactmessage/">
+          Open admin
+        </a>
+        {% if instance.status == "approved" %}
+          <a class="btn ghost" href="mailto:{{ instance.email }}?subject=Re%3A%20{{ instance.subject|urlencode }}">
+            Email {{ instance.name }} <span class="arrow">↗</span>
+          </a>
+        {% endif %}
+      </div>
+
+      <!-- Stats -->
+      <div class="action-stats reveal">
+        <div class="action-stat">
+          <b class="pending">{{ pending_count }}</b>
+          <span>Pending</span>
+        </div>
+        <div class="action-stat">
+          <b class="approved">{{ approved_count }}</b>
+          <span>Approved</span>
+        </div>
+        <div class="action-stat">
+          <b class="rejected">{{ rejected_count }}</b>
+          <span>Rejected</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

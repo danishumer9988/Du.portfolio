@@ -1,0 +1,256 @@
+<style>
+  /* ---------- Industries section ---------- */
+  .home-industries{padding:100px 0 90px}
+
+  /* Header */
+  .ind-head{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:48px;
+    align-items:end;
+    margin-bottom:32px;
+    padding-bottom:26px;
+    border-bottom:1px solid var(--line);
+  }
+  .ind-head .eyebrow{display:block;margin-bottom:12px}
+  .ind-head h2{
+    font-size:clamp(2rem,3.8vw,3rem);
+    line-height:1.04;
+    letter-spacing:-.05em;
+    font-weight:850;
+    color:var(--text);
+    margin:0;
+    text-wrap:balance;
+  }
+  .ind-head-side{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .ind-head-side p{
+    font-size:.98rem;
+    line-height:1.6;
+    color:var(--muted);
+    margin:0;
+    max-width:440px;
+  }
+  .ind-count{
+    display:inline-flex;
+    align-items:baseline;
+    gap:8px;
+    font-size:.7rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+  }
+  .ind-count b{
+    font-size:1.5rem;
+    color:var(--accent);
+    letter-spacing:-.04em;
+    font-weight:900;
+    line-height:1;
+  }
+
+  /* Grid */
+  .ind-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:0;
+    border-top:1px solid var(--line);
+    border-left:1px solid var(--line);
+    border-radius:16px;
+    overflow:hidden;
+    background:var(--surface);
+  }
+
+  /* Tile */
+  .ind-tile{
+    position:relative;
+    padding:26px 24px 24px;
+    border-right:1px solid var(--line);
+    border-bottom:1px solid var(--line);
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    min-height:170px;
+    transition:background-color .3s ease;
+  }
+  .ind-tile::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:radial-gradient(circle at 100% 0%,
+      color-mix(in srgb,var(--accent) 8%,transparent),
+      transparent 60%);
+    opacity:0;
+    transition:opacity .4s ease;
+    pointer-events:none;
+  }
+  .ind-tile:hover::before{opacity:1}
+  .ind-tile:hover{background:color-mix(in srgb,var(--surface-2) 55%,var(--surface))}
+
+  /* Index */
+  .ind-num{
+    font-size:.66rem;
+    letter-spacing:.16em;
+    font-weight:800;
+    color:var(--muted);
+    font-variant-numeric:tabular-nums;
+    transition:color .3s ease;
+    align-self:flex-start;
+  }
+  .ind-tile:hover .ind-num{color:var(--accent)}
+
+  /* Icon */
+  .ind-icon{
+    width:42px;height:42px;
+    display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--line-strong);
+    border-radius:12px;
+    background:var(--surface-2);
+    font-size:1.05rem;
+    font-weight:900;
+    color:var(--text);
+    transition:transform .4s cubic-bezier(.2,.8,.2,1),
+               border-color .3s ease,
+               color .3s ease;
+    flex-shrink:0;
+  }
+  .ind-tile:hover .ind-icon{
+    transform:translateY(-2px) rotate(-5deg);
+    border-color:color-mix(in srgb,var(--accent) 40%,var(--line));
+    color:var(--accent);
+  }
+
+  /* Title + description */
+  .ind-title{
+    font-size:1.02rem;
+    font-weight:800;
+    letter-spacing:-.025em;
+    line-height:1.2;
+    color:var(--text);
+    margin:0;
+    transition:color .3s ease;
+  }
+  .ind-tile:hover .ind-title{color:var(--accent)}
+
+  .ind-desc{
+    font-size:.84rem;
+    line-height:1.55;
+    color:var(--muted);
+    margin:0;
+    flex:1;
+    display:-webkit-box;
+    -webkit-line-clamp:3;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+
+  /* Arrow at bottom-right */
+  .ind-arrow{
+    position:absolute;
+    bottom:20px;right:22px;
+    font-size:.95rem;
+    color:var(--muted);
+    opacity:0;
+    transform:translate(-4px,4px);
+    transition:opacity .35s ease,transform .35s cubic-bezier(.2,.8,.2,1),color .3s ease;
+    pointer-events:none;
+  }
+  .ind-tile:hover .ind-arrow{
+    opacity:1;
+    transform:translate(0,0);
+    color:var(--accent);
+  }
+
+  /* Responsive */
+  @media (max-width:980px){
+    .home-industries{padding:80px 0 70px}
+    .ind-head{
+      grid-template-columns:1fr;
+      gap:20px;
+      margin-bottom:26px;
+      padding-bottom:22px;
+    }
+    .ind-head-side p{max-width:100%}
+    .ind-grid{grid-template-columns:repeat(3,1fr)}
+    .ind-tile{min-height:160px;padding:22px 20px 20px}
+  }
+
+  @media (max-width:720px){
+    .home-industries{padding:64px 0 56px}
+    .ind-head{margin-bottom:22px;padding-bottom:18px}
+    .ind-grid{
+      grid-template-columns:repeat(2,1fr);
+      border-radius:14px;
+    }
+    .ind-tile{
+      padding:20px 18px 18px;
+      gap:12px;
+      min-height:150px;
+    }
+    .ind-num{font-size:.62rem}
+    .ind-icon{width:36px;height:36px;border-radius:10px;font-size:.92rem}
+    .ind-title{font-size:.94rem}
+    .ind-desc{font-size:.78rem;-webkit-line-clamp:2}
+    .ind-arrow{display:none}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .ind-tile,
+    .ind-tile::before,
+    .ind-icon,
+    .ind-title,
+    .ind-arrow{transition:none}
+  }
+</style>
+
+<section class="section home-industries" id="industries">
+  <div class="wrap">
+
+    <header class="ind-head reveal">
+      <div>
+        <span class="eyebrow">Industries</span>
+        <h2 class="kicker" style="margin:0">Experience across contexts.</h2>
+      </div>
+      <div class="ind-head-side">
+        <p>Digital products, workflows, and experiences tailored to the needs of each industry.</p>
+        {% if industries %}
+          <div class="ind-count">
+            <b>{{ industries|length }}</b>
+            <span>industr{{ industries|length|pluralize:"y,ies" }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if industries %}
+      <div class="ind-grid reveal">
+        {% for industry in industries %}
+          <article class="ind-tile">
+
+            <span class="ind-num">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</span>
+
+            <span class="ind-icon">
+              {% if industry.icon %}{{ industry.icon }}{% else %}✦{% endif %}
+            </span>
+
+            <h3 class="ind-title">{{ industry.name }}</h3>
+
+            <p class="ind-desc">{{ industry.description|default:"Digital products, workflows and experiences tailored to the needs of the industry." }}</p>
+
+            <span class="ind-arrow" aria-hidden="true">↗</span>
+
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="surface">
+        <p class="muted" style="margin:0">Add industries through Admin.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</section>

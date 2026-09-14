@@ -1,0 +1,447 @@
+<style>
+  /* ---------- Experience: editorial timeline ---------- */
+  .home-experience{padding:110px 0 100px}
+
+  /* Section header */
+  .exp-head{
+    display:grid;
+    grid-template-columns:1.1fr 1fr;
+    gap:60px;
+    align-items:end;
+    margin-bottom:64px;
+    padding-bottom:40px;
+    border-bottom:1px solid var(--line);
+  }
+  .exp-head .eyebrow{display:block;margin-bottom:14px}
+  .exp-head h2{
+    font-size:clamp(2.2rem,4.2vw,3.4rem);
+    line-height:1.02;
+    letter-spacing:-.05em;
+    font-weight:850;
+    color:var(--text);
+    margin:0;
+    text-wrap:balance;
+  }
+  .exp-head-side{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    align-items:flex-start;
+  }
+  .exp-head-side p{
+    font-size:1rem;
+    line-height:1.65;
+    color:var(--muted);
+    margin:0;
+    max-width:460px;
+  }
+  .exp-count{
+    display:inline-flex;
+    align-items:baseline;
+    gap:8px;
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+  }
+  .exp-count b{
+    font-size:1.6rem;
+    color:var(--accent);
+    letter-spacing:-.04em;
+    font-weight:900;
+    line-height:1;
+  }
+
+  /* Timeline list */
+  .exp-list{
+    display:grid;
+    gap:0;
+  }
+
+  .exp-item{
+    display:grid;
+    grid-template-columns:220px 1fr;
+    gap:56px;
+    padding:44px 0;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    transition:padding .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .exp-item::before{
+    content:"";
+    position:absolute;
+    left:-24px;right:-24px;top:0;bottom:0;
+    border-radius:20px;
+    background:linear-gradient(120deg,
+      color-mix(in srgb,var(--accent) 5%,transparent),
+      transparent 65%);
+    opacity:0;
+    transition:opacity .4s ease;
+    pointer-events:none;
+    z-index:-1;
+  }
+  .exp-item:hover{padding-left:24px;padding-right:24px}
+  .exp-item:hover::before{opacity:1}
+
+  .exp-item:first-child{padding-top:0}
+  .exp-item:last-child{border-bottom:0;padding-bottom:0}
+
+  /* Timeline marker — small dot on the left edge */
+  .exp-marker{
+    position:absolute;
+    left:-44px;top:52px;
+    width:10px;height:10px;
+    border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 15%,transparent);
+    transition:box-shadow .4s ease,transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .exp-item:first-child .exp-marker{top:8px}
+  .exp-item:hover .exp-marker{
+    transform:scale(1.15);
+    box-shadow:0 0 0 8px color-mix(in srgb,var(--accent) 22%,transparent),
+                0 0 20px color-mix(in srgb,var(--accent) 40%,transparent);
+  }
+
+  /* Timeline line */
+  .exp-list{
+    position:relative;
+    padding-left:32px;
+  }
+  .exp-list::before{
+    content:"";
+    position:absolute;
+    left:4px;top:10px;bottom:10px;
+    width:1px;
+    background:linear-gradient(180deg,
+      transparent 0%,
+      var(--line-strong) 8%,
+      var(--line-strong) 92%,
+      transparent 100%);
+    pointer-events:none;
+  }
+
+  /* Left column — dates + location */
+  .exp-meta{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    padding-top:2px;
+  }
+  .exp-date{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .exp-date-range{
+    font-size:.92rem;
+    font-weight:700;
+    color:var(--text);
+    letter-spacing:-.015em;
+    line-height:1.3;
+  }
+  .exp-date-range .dash{
+    color:var(--muted);
+    font-weight:400;
+    margin:0 4px;
+  }
+  .exp-date-range .present{
+    color:var(--accent);
+    font-weight:800;
+  }
+  .exp-duration{
+    font-size:.72rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    font-weight:800;
+    color:var(--muted);
+  }
+
+  .exp-location{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:.85rem;
+    color:var(--muted);
+    letter-spacing:-.005em;
+  }
+  .exp-location svg{
+    width:12px;height:12px;flex-shrink:0;
+    opacity:.7;
+  }
+
+  /* Right column — position + company + description */
+  .exp-main{min-width:0}
+
+  .exp-role{
+    font-size:clamp(1.25rem,1.9vw,1.6rem);
+    font-weight:850;
+    letter-spacing:-.035em;
+    line-height:1.15;
+    color:var(--text);
+    margin:0 0 6px;
+    transition:color .3s ease;
+  }
+  .exp-item:hover .exp-role{color:var(--accent)}
+
+  .exp-company{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.95rem;
+    color:var(--muted);
+    font-weight:600;
+    letter-spacing:-.01em;
+    margin-bottom:18px;
+  }
+  .exp-company::before{
+    content:"";
+    width:16px;height:1px;
+    background:var(--muted);
+    opacity:.5;
+  }
+
+  .exp-desc{
+    font-size:.98rem;
+    line-height:1.7;
+    color:var(--muted);
+    margin:0 0 20px;
+    max-width:680px;
+  }
+
+  /* Responsibilities */
+  .exp-resp{
+    list-style:none;
+    margin:0 0 22px;
+    padding:0;
+    display:grid;
+    gap:8px;
+    max-width:680px;
+  }
+  .exp-resp li{
+    display:grid;
+    grid-template-columns:16px 1fr;
+    gap:12px;
+    font-size:.92rem;
+    line-height:1.6;
+    color:var(--muted);
+    align-items:start;
+  }
+  .exp-resp li::before{
+    content:"";
+    width:5px;height:5px;
+    border-radius:50%;
+    background:color-mix(in srgb,var(--accent) 60%,transparent);
+    margin-top:10px;
+  }
+
+  /* Tech chips */
+  .exp-tech{
+    display:flex;flex-wrap:wrap;gap:6px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+  .exp-tech-chip{
+    display:inline-flex;
+    padding:5px 11px;
+    border:1px solid var(--line-strong);
+    border-radius:999px;
+    background:color-mix(in srgb,var(--bg) 40%,transparent);
+    color:var(--muted);
+    font-size:.72rem;
+    font-weight:600;
+    letter-spacing:-.005em;
+    white-space:nowrap;
+    transition:border-color .25s ease,color .25s ease,background-color .25s ease;
+  }
+  .exp-item:hover .exp-tech-chip{
+    color:var(--text);
+    border-color:color-mix(in srgb,var(--text) 20%,var(--line-strong));
+  }
+  .exp-tech-chip:hover{
+    color:var(--accent);
+    border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    background:color-mix(in srgb,var(--accent) 8%,transparent);
+  }
+
+  /* Current role indicator */
+  .exp-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:color-mix(in srgb,var(--accent) 12%,transparent);
+    border:1px solid color-mix(in srgb,var(--accent) 30%,transparent);
+    color:var(--accent);
+    font-size:.68rem;
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .exp-badge::before{
+    content:"";
+    width:6px;height:6px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 8px var(--accent);
+    animation:expPulse 2.2s ease-out infinite;
+  }
+  @keyframes expPulse{
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:.5;transform:scale(1.2)}
+  }
+
+  /* Responsive */
+  @media (max-width:980px){
+    .home-experience{padding:90px 0 80px}
+    .exp-head{
+      grid-template-columns:1fr;
+      gap:24px;
+      margin-bottom:48px;
+      padding-bottom:32px;
+    }
+    .exp-head-side p{max-width:100%}
+
+    .exp-item{
+      grid-template-columns:180px 1fr;
+      gap:36px;
+      padding:36px 0;
+    }
+    .exp-marker{left:-36px;top:44px}
+    .exp-item:first-child .exp-marker{top:8px}
+  }
+
+  @media (max-width:720px){
+    .home-experience{padding:72px 0 60px}
+    .exp-head{margin-bottom:36px;padding-bottom:26px}
+
+    .exp-list{padding-left:24px}
+    .exp-list::before{left:2px}
+    .exp-marker{left:-30px;top:36px;width:8px;height:8px}
+    .exp-item:first-child .exp-marker{top:6px}
+
+    .exp-item{
+      grid-template-columns:1fr;
+      gap:16px;
+      padding:32px 0;
+    }
+    .exp-item:first-child{padding-top:0}
+    .exp-item:hover{padding-left:0;padding-right:0}
+
+    .exp-meta{
+      flex-direction:row;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+    }
+    .exp-date{flex-direction:row;align-items:center;gap:8px}
+    .exp-duration{font-size:.68rem}
+
+    .exp-role{font-size:1.15rem}
+    .exp-company{font-size:.88rem;margin-bottom:14px}
+    .exp-desc{font-size:.92rem;margin-bottom:16px}
+    .exp-resp li{font-size:.88rem}
+    .exp-tech-chip{font-size:.68rem;padding:4px 9px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .exp-item,
+    .exp-marker,
+    .exp-role,
+    .exp-badge::before{transition:none;animation:none}
+  }
+</style>
+
+<section class="section home-experience" id="experience">
+  <div class="wrap">
+
+    <header class="exp-head reveal">
+      <div>
+        <span class="eyebrow">Experience</span>
+        <h2 class="kicker" style="margin:0">A timeline of shipping.</h2>
+      </div>
+      <div class="exp-head-side">
+        <p>Roles and projects shaped around ownership, product thinking, and dependable delivery.</p>
+        {% if experiences %}
+          <div class="exp-count">
+            <b>{{ experiences|length }}</b>
+            <span>role{{ experiences|length|pluralize }}</span>
+          </div>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if experiences %}
+      <div class="exp-list">
+
+        {% for exp in experiences %}
+          <article class="exp-item reveal">
+
+            <span class="exp-marker" aria-hidden="true"></span>
+
+            <div class="exp-meta">
+              <div class="exp-date">
+                <span class="exp-date-range">
+                  {{ exp.start_date|date:"M Y" }}
+                  <span class="dash">—</span>
+                  {% if exp.is_current %}
+                    <span class="present">Present</span>
+                  {% elif exp.end_date %}
+                    {{ exp.end_date|date:"M Y" }}
+                  {% else %}
+                    <span class="present">Present</span>
+                  {% endif %}
+                </span>
+                {% if exp.is_current %}
+                  <span class="exp-duration">Current role</span>
+                {% endif %}
+              </div>
+
+              {% if exp.location %}
+                <span class="exp-location">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  {{ exp.location }}
+                </span>
+              {% endif %}
+            </div>
+
+            <div class="exp-main">
+              {% if exp.is_current %}
+                <span class="exp-badge">Currently here</span>
+              {% endif %}
+
+              <h3 class="exp-role">{{ exp.position }}</h3>
+              <span class="exp-company">{{ exp.company }}</span>
+
+              {% if exp.description %}
+                <p class="exp-desc">{{ exp.description }}</p>
+              {% endif %}
+
+              {% if exp.responsibilities %}
+                <ul class="exp-resp">
+                  {% for item in exp.responsibilities.splitlines %}
+                    {% if item.strip %}<li>{{ item }}</li>{% endif %}
+                  {% endfor %}
+                </ul>
+              {% endif %}
+
+              {% if exp.technologies.all %}
+                <div class="exp-tech">
+                  {% for tech in exp.technologies.all %}
+                    <span class="exp-tech-chip">{{ tech.name }}</span>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+          </article>
+        {% endfor %}
+
+      </div>
+    {% else %}
+      <div class="surface">
+        <p class="muted" style="margin:0">Add experience through Admin.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</section>

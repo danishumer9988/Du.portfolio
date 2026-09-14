@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/admin-custom.css' %}">
+  {% with prefs=admin_prefs %}
+    <style>
+      {% if prefs.boxed_layout %}
+        body { max-width: 1400px; margin: 0 auto; box-shadow: 0 0 0 1px rgba(255,255,255,.04); }
+      {% endif %}
+      {% if prefs.sticky_header %}
+        #header, header.sticky { position: sticky; top: 0; z-index: 40; }
+      {% endif %}
+      {% if prefs.dark_header %}
+        html body #header, html body header { background:#0a0a0a !important; color:#e8ecf4 !important; }
+      {% endif %}
+      {% if prefs.dark_sidebar %}
+        nav, aside, [data-sidebar] { background:#0a0a0a !important; }
+      {% endif %}
+      {% if prefs.show_banner and prefs.banner_text %}
+        body::before {
+          content: "{{ prefs.banner_text|escapejs }}";
+          display:block;
+          padding:10px 20px;
+          background:#84cc16;
+          color:#0a0a0a;
+          font-weight:700;
+          text-align:center;
+          font-size:13px;
+          letter-spacing:.01em;
+        }
+      {% endif %}
+    </style>
+  {% endwith %}
+{% endblock %}
