@@ -315,8 +315,8 @@
   }
 
   /* ============================================================
-     RESPONSIVE — TABLET (≤980px)
-     Portrait moves above copy, centered, capped at 360px
+     TABLET (≤980px)
+     Single column — copy first, then portrait
      ============================================================ */
   @media (max-width:980px){
     .hero{
@@ -329,10 +329,10 @@
       gap:44px;
       margin-bottom:48px;
     }
+    /* Portrait stays in place — no `order:-1`. Copy renders first. */
     .hero-portrait{
       justify-self:center;
       max-width:340px;
-      order:-1;
     }
     .hero-name{font-size:clamp(2.6rem,7.5vw,4.8rem)}
     .hero-headline{font-size:clamp(1.2rem,2.6vw,1.55rem)}
@@ -354,8 +354,8 @@
   }
 
   /* ============================================================
-     RESPONSIVE — MOBILE (≤720px)
-     Tighter spacing, smaller portrait, stacked facts
+     MOBILE (≤720px)
+     Copy first, portrait below, CTAs stacked full-width
      ============================================================ */
   @media (max-width:720px){
     .hero{
@@ -430,8 +430,7 @@
   }
 
   /* ============================================================
-     RESPONSIVE — SMALL PHONES (≤380px)
-     Tightest layout for iPhone SE and similar
+     SMALL PHONES (≤380px)
      ============================================================ */
   @media (max-width:380px){
     .hero{padding:28px 0 24px}
@@ -474,7 +473,6 @@
 
   /* ============================================================
      LANDSCAPE PHONES
-     Portrait is short — hide it to keep copy visible
      ============================================================ */
   @media (max-height:500px) and (orientation:landscape){
     .hero{
@@ -487,7 +485,6 @@
       margin-bottom:24px;
     }
     .hero-portrait{
-      order:0;
       max-width:200px;
       justify-self:end;
     }
@@ -533,7 +530,7 @@
 
     <div class="hero-grid">
 
-      <!-- Left: copy -->
+      <!-- Left: copy — renders first on every screen -->
       <div class="hero-copy">
 
         <span class="hero-status">
@@ -554,7 +551,7 @@
 
       </div>
 
-      <!-- Right: portrait -->
+      <!-- Right: portrait — renders last on mobile -->
       <div class="hero-portrait">
         <div class="hero-portrait-glow" aria-hidden="true"></div>
         <div class="hero-portrait-frame">
