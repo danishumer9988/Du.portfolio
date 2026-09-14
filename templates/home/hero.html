@@ -561,7 +561,7 @@
           {% if site.profile_image %}
             <img src="{{ site.profile_image.url }}" alt="{{ site.site_name }}" loading="eager">
           {% else %}
-            <img src="{% static 'images/hero.png' %}" alt="{{ site.site_name }}" loading="eager">
+            <img src="{% static 'images/hero.jpg' %}" alt="{{ site.site_name }}" loading="eager">
           {% endif %}
           <span class="hero-portrait-chip">{{ site.availability|default:"Available for work" }}</span>
         </div>
