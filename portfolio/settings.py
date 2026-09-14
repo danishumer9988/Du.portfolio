@@ -64,6 +64,9 @@ INSTALLED_APPS = [
 
     # --- Project ---
     "main",
+
+    "cloudinary_storage",
+    "cloudinary",
 ]
 
 
@@ -357,3 +360,20 @@ STORAGES = {
 
 WHITENOISE_MAX_AGE = 31536000
 WHITENOISE_USE_FINDERS = True
+
+
+# ============================================================
+# CLOUDINARY — media storage
+# ============================================================
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", ""),
+    "API_KEY": os.getenv("CLOUDINARY_API_KEY", ""),
+    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET", ""),
+}
+
+# Use Cloudinary when credentials exist, local filesystem otherwise
+if CLOUDINARY_STORAGE["CLOUD_NAME"]:
+    STORAGES["default"] = {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    }
